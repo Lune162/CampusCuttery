@@ -75,7 +75,7 @@
 <body>
   <div class="container">
     <h1>Client Sign Up</h1>
-    <form id="clientForm" action="appointment.html" method="get">
+    <form id="clientForm">
       <input type="email" id="clientEmail" name="email" placeholder="Email" required>
       <input type="tel" id="clientPhone" name="phone" placeholder="Phone Number" required>
       <input type="text" id="clientAddress" name="address" placeholder="Nearest Address (Dorm/College)" required>
@@ -112,7 +112,76 @@
     function toggleOther(val) {
       document.getElementById('otherHairstyle').style.display = (val === 'other') ? 'block' : 'none';
     }
+
+    // Handle form submission for client registration
+    document.getElementById("clientForm").addEventListener("submit", function(e) {
+      e.preventDefault(); // Prevent form submission
+
+      // Collect form data
+      const clientData = {
+        email: document.getElementById("clientEmail").value,
+        phone: document.getElementById("clientPhone").value,
+        address: document.getElementById("clientAddress").value,
+        hairstyle: document.getElementById("hairstyle").value,
+        otherHairstyle: document.getElementById("otherHairstyle").value
+      };
+
+      // Store in localStorage (optional, can be replaced by a backend API)
+      localStorage.setItem("clientData", JSON.stringify(clientData));
+
+      // Confirm the client registration
+      alert("Client registered successfully!");
+
+      // Redirect to another page (e.g., appointment confirmation page)
+      window.location.href = "appointment.html";
+    });
+
+    // Stripe Payment form logic (for payment processing)
+    document.addEventListener("DOMContentLoaded", async function () {
+      if (document.getElementById("payment-form")) {
+        const stripe = Stripe("YOUR_PUBLISHABLE_KEY"); // Replace with your Stripe public key
+        const elements = stripe.elements();
+        const card = elements.create("card");
+        
+        // Mount the card element
+        card.mount("#card-element");
+
+        const form = document.getElementById("payment-form");
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault(); // Prevent the default form submission
+
+          const { paymentMethod, error } = await stripe.createPaymentMethod({
+            type: "card",
+            card: card,
+            billing_details: { name: document.getElementById("name").value }
+          });
+
+          if (error) {
+            alert(error.message); // Show error message if any
+          } else {
+            // If payment method is successfully created, process payment
+            processPayment(paymentMethod.id);
+          }
+        });
+      }
+    });
+
+    // Function to process payment
+    function processPayment(paymentMethodId) {
+      fetch("/process-payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paymentMethodId })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert("Payment successful!");
+        } else {
+          alert("Payment failed. Please try again.");
+        }
+      });
+    }
   </script>
-  <script src="script.js"></script>
 </body>
 </html>
