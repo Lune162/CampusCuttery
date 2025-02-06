@@ -1,7 +1,38 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Handle signup form submission
+    const signupForm = document.getElementById("signupForm");
+    if (signupForm) {
+        signupForm.addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent default form submission behavior
+
+            let name = document.getElementById("name").value;
+            let email = document.getElementById("email").value;
+            let password = document.getElementById("password").value;
+
+            // Validate form data
+            if (!name || !email || !password) {
+                alert("Please fill in all fields!");
+                return;
+            }
+
+            // Save the barber details into localStorage
+            let barbers = JSON.parse(localStorage.getItem("barbers")) || [];
+            barbers.push({ name, email, password, availability: [] });
+            localStorage.setItem("barbers", JSON.stringify(barbers));
+
+            // Optionally store the email to simulate login
+            localStorage.setItem("loggedInBarber", email);
+
+            alert("Signup successful!");
+            window.location.href = "dashboard.html"; // Redirect to dashboard after signup
+        });
+    }
+
+    // Display availability after page load
     displayAvailability();
 });
 
+// Get logged-in barber from localStorage
 function getLoggedInBarber() {
     let barbers = JSON.parse(localStorage.getItem("barbers")) || [];
     let loggedInEmail = localStorage.getItem("loggedInBarber");
@@ -52,6 +83,9 @@ function setAvailability() {
             return;
         }
 
+        // Log for debugging
+        console.log(`Setting availability for ${day}: ${startTime} - ${endTime}`);
+
         // Check if the day already exists, update instead of adding duplicate entries
         let existingIndex = barbers[barberIndex].availability.findIndex(slot => slot.day === day);
         if (existingIndex !== -1) {
@@ -67,7 +101,7 @@ function setAvailability() {
     displayAvailability();
 }
 
-// Display availability
+// Display availability on the page
 function displayAvailability() {
     let loggedInBarber = getLoggedInBarber();
     if (!loggedInBarber) return;
