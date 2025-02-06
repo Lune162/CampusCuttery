@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book a Barber</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h2>Find a Barber</h2>
+    <input type="text" id="search" placeholder="Filter by hairstyle">
+    <ul id="barberList"></ul>
+
+    <h3>Book a Haircut</h3>
+    <input type="text" id="clientName" placeholder="Your Name">
+    <button onclick="bookHaircut()">Confirm Booking</button>
+
+    <h3>Rate Your Haircut</h3>
+    <button onclick="leaveReview()" disabled id="rateBtn">Leave a Review</button>
+
+    <script src="script.js"></script>
+    <script src="stripe.js"></script>
+</body>
+</html>
