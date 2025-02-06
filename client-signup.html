@@ -90,22 +90,6 @@
         <option value="william-mary">William and Mary</option>
         <option value="jmu">James Madison University</option>
       </select>
-
-      <select name="hairstyle" id="hairstyle" onchange="displayBarbers()">
-        <option value="">Select a Hairstyle (Optional)</option>
-        <option value="beard trim">Beard Trim</option>
-        <option value="buzz cut">Buzz Cut</option>
-        <option value="bald">Bald</option>
-        <option value="mullet">Mullet</option>
-        <option value="low taper fade">Low Taper Fade</option>
-        <option value="blowout taper">Blowout Taper</option>
-        <option value="textured fringe">Textured Fringe</option>
-        <option value="wolfcut">Wolfcut</option>
-        <option value="middle part">Middle Part</option>
-        <option value="straightened hair">Straightened Hair</option>
-        <option value="dyed hair">Dyed Hair</option>
-        <option value="other">Other</option>
-      </select>
     </form>
 
     <h2>Available Barbers</h2>
@@ -115,26 +99,6 @@
   </div>
 
   <script>
-    // Sample barber data to be stored in localStorage
-    const barbersBySchool = {
-        "uva": [
-            { name: "John Doe", location: "Room A", days: ["Monday", "Wednesday"], timeslots: ["9:00-11:00", "1:00-3:00"] },
-            { name: "Jane Smith", location: "Room B", days: ["Tuesday", "Thursday"], timeslots: ["10:00-12:00", "2:00-4:00"] }
-        ],
-        "virginia-tech": [
-            { name: "Tom Brown", location: "Room C", days: ["Monday", "Friday"], timeslots: ["10:00-12:00", "3:00-5:00"] }
-        ],
-        "william-mary": [
-            { name: "Sara White", location: "Room D", days: ["Wednesday", "Friday"], timeslots: ["9:00-11:00", "1:00-3:00"] }
-        ],
-        "jmu": [
-            { name: "David Green", location: "Room E", days: ["Tuesday", "Thursday"], timeslots: ["11:00-1:00", "2:00-4:00"] }
-        ]
-    };
-
-    // Store barber data in localStorage
-    localStorage.setItem('barbersBySchool', JSON.stringify(barbersBySchool));
-
     let selectedBarber = null;
 
     function displayBarbers() {
@@ -142,32 +106,36 @@
         const barberList = document.getElementById("barberList");
         barberList.innerHTML = "";
 
-        if (school) {
-            const barbersBySchool = JSON.parse(localStorage.getItem('barbersBySchool')) || {};
-            const barbers = barbersBySchool[school] || [];
+        if (!school) return;
 
-            if (barbers.length > 0) {
-                barbers.forEach(barber => {
-                    const button = document.createElement("button");
-                    button.classList.add("barber-button");
-                    button.innerHTML = `
-                        <strong>${barber.name}</strong><br>
-                        <span>${barber.location}</span><br>
-                        <span>Available Days: ${barber.days ? barber.days.join(", ") : "Not specified"}</span><br>
-                        <span>Available Times: ${formatTimeSlots(barber.timeslots)}</span>
-                    `;
-                    button.onclick = () => selectBarber(barber, button);
-                    barberList.appendChild(button);
-                });
-            } else {
-                barberList.innerHTML = "<p>No barbers available for this school.</p>";
-            }
+        // Get stored barbers from localStorage
+        const barbersBySchool = JSON.parse(localStorage.getItem('barbersBySchool')) || {};
+        const barbers = barbersBySchool[school] || [];
+
+        if (barbers.length === 0) {
+            barberList.innerHTML = "<p>No barbers available for this school.</p>";
+            return;
         }
+
+        // Display barbers as buttons
+        barbers.forEach(barber => {
+            const button = document.createElement("button");
+            button.classList.add("barber-button");
+            button.innerHTML = `
+                <strong>${barber.name}</strong><br>
+                <span>${barber.location}</span><br>
+                <span>Hairstyles: ${barber.hairstyles.length ? barber.hairstyles.join(", ") : "Not specified"}</span><br>
+                <span>Available Days: ${barber.days ? barber.days.join(", ") : "Not specified"}</span><br>
+                <span>Available Times: ${formatTimeSlots(barber.timeslots)}</span>
+            `;
+            button.onclick = () => selectBarber(barber, button);
+            barberList.appendChild(button);
+        });
     }
 
     function formatTimeSlots(timeslots) {
         return timeslots && timeslots.length
-            ? timeslots.map(time => time.replace("-", " to ")).join(", ")
+            ? timeslots.filter(time => time).join(", ")
             : "Not specified";
     }
 
@@ -184,5 +152,6 @@
         }
     }
   </script>
+
 </body>
 </html>
