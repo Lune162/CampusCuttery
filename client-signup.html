@@ -69,17 +69,39 @@
     .contact a:hover {
       text-decoration: underline;
     }
+    .barber-list {
+      margin-top: 20px;
+      list-style: none;
+      padding: 0;
+    }
+    .barber-item {
+      background: #fff;
+      padding: 10px;
+      margin: 10px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
   </style>
-  <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
+
   <div class="container">
     <h1>Client Sign Up</h1>
     <form id="clientForm">
       <input type="email" id="clientEmail" name="email" placeholder="Email" required>
       <input type="tel" id="clientPhone" name="phone" placeholder="Phone Number" required>
       <input type="text" id="clientAddress" name="address" placeholder="Nearest Address (Dorm/College)" required>
-      <select name="hairstyle" id="hairstyle" required onchange="toggleOther(this.value)">
+      
+      <!-- School Dropdown -->
+      <select name="school" id="clientSchool" required onchange="displayBarbers()">
+        <option value="">Select School</option>
+        <option value="uva">University of Virginia</option>
+        <option value="virginia-tech">Virginia Tech</option>
+        <option value="william-mary">William and Mary</option>
+        <option value="jmu">James Madison University</option>
+      </select>
+
+      <select name="hairstyle" id="hairstyle" required>
         <option value="">Select a Hairstyle</option>
         <option value="beard trim">Beard Trim</option>
         <option value="buzz cut">Buzz Cut</option>
@@ -94,94 +116,61 @@
         <option value="dyed hair">Dyed Hair</option>
         <option value="other">Other</option>
       </select>
-      <input type="text" id="otherHairstyle" name="otherHairstyle" placeholder="Specify Hairstyle" style="display:none;">
+
       <button type="submit">Submit Appointment Request</button>
     </form>
 
-    <!-- Stripe Payment Form -->
-    <h2>Secure Payment</h2>
-    <form id="payment-form">
-      <input type="text" id="name" placeholder="Full Name" required>
-      <div id="card-element"><!-- Stripe Card Input --></div>
-      <button id="submit-payment">Pay Now</button>
-      <div id="payment-message"></div>
-    </form>
+    <!-- Barber List Section -->
+    <h2>Available Barbers</h2>
+    <ul id="barberList" class="barber-list"></ul>
   </div>
 
   <script>
-    function toggleOther(val) {
-      document.getElementById('otherHairstyle').style.display = (val === 'other') ? 'block' : 'none';
-    }
-
     // Handle form submission for client registration
     document.getElementById("clientForm").addEventListener("submit", function(e) {
       e.preventDefault(); // Prevent form submission
 
-      // Collect form data
       const clientData = {
         email: document.getElementById("clientEmail").value,
         phone: document.getElementById("clientPhone").value,
         address: document.getElementById("clientAddress").value,
-        hairstyle: document.getElementById("hairstyle").value,
-        otherHairstyle: document.getElementById("otherHairstyle").value
+        hairstyle: document.getElementById("hairstyle").value
       };
 
-      // Store in localStorage (optional, can be replaced by a backend API)
       localStorage.setItem("clientData", JSON.stringify(clientData));
 
-      // Confirm the client registration
       alert("Client registered successfully!");
-
-      // Redirect to another page (e.g., appointment confirmation page)
       window.location.href = "appointment.html";
     });
 
-    // Stripe Payment form logic (for payment processing)
-    document.addEventListener("DOMContentLoaded", async function () {
-      if (document.getElementById("payment-form")) {
-        const stripe = Stripe("YOUR_PUBLISHABLE_KEY"); // Replace with your Stripe public key
-        const elements = stripe.elements();
-        const card = elements.create("card");
-        
-        // Mount the card element
-        card.mount("#card-element");
+    // Display barbers based on selected school
+    function displayBarbers() {
+      const school = document.getElementById("clientSchool").value;
+      const barberList = document.getElementById("barberList");
+      barberList.innerHTML = ""; // Clear existing barbers list
 
-        const form = document.getElementById("payment-form");
-        form.addEventListener("submit", async (event) => {
-          event.preventDefault(); // Prevent the default form submission
+      if (school) {
+        const barbersBySchool = JSON.parse(localStorage.getItem('barbersBySchool')) || {};
+        const barbers = barbersBySchool[school] || [];
 
-          const { paymentMethod, error } = await stripe.createPaymentMethod({
-            type: "card",
-            card: card,
-            billing_details: { name: document.getElementById("name").value }
+        if (barbers.length > 0) {
+          barbers.forEach(barber => {
+            const li = document.createElement("li");
+            li.classList.add("barber-item");
+            li.innerHTML = `
+              <h3>${barber.email}</h3>
+              <p>Phone: ${barber.phone}</p>
+              <p>Location: ${barber.location}</p>
+              <p>Hairstyles: ${barber.hairstyles.join(", ")}</p>
+            `;
+            barberList.appendChild(li);
           });
-
-          if (error) {
-            alert(error.message); // Show error message if any
-          } else {
-            // If payment method is successfully created, process payment
-            processPayment(paymentMethod.id);
-          }
-        });
-      }
-    });
-
-    // Function to process payment
-    function processPayment(paymentMethodId) {
-      fetch("/process-payment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ paymentMethodId })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          alert("Payment successful!");
         } else {
-          alert("Payment failed. Please try again.");
+          barberList.innerHTML = "<p>No barbers available for this school.</p>";
         }
-      });
+      }
     }
   </script>
+
 </body>
 </html>
