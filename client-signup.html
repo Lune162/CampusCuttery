@@ -14,15 +14,20 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: flex-start;
       min-height: 100vh;
     }
-    
+
     .container {
       width: 100%;
       max-width: 600px;
       padding: 20px;
       box-sizing: border-box;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center; /* Ensures everything inside is centered */
+      justify-content: center;
     }
 
     .form-container {
@@ -32,17 +37,22 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       margin-top: 20px;
       width: 100%;
+      max-width: 450px; /* Ensures proper centering on larger screens */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     input, select, button {
       display: block;
       padding: 12px;
-      margin: 10px 0;
+      margin: 10px auto;
       font-size: 16px;
-      width: 100%;
+      width: 90%;
       border: 1px solid #ddd;
       border-radius: 5px;
       box-sizing: border-box;
+      text-align: center;
     }
 
     button {
@@ -53,6 +63,7 @@
       font-weight: bold;
       padding: 12px;
       display: none;
+      width: 100%;
     }
 
     button:hover {
@@ -68,6 +79,7 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
+      width: 100%;
     }
 
     .barber-button {
@@ -138,48 +150,49 @@
     let selectedBarber = null;
 
     function displayBarbers() {
-        const school = document.getElementById("clientSchool").value;
-        const selectedHairstyle = document.getElementById("hairstyle").value;
-        const barberList = document.getElementById("barberList");
-        barberList.innerHTML = "";
+    const school = document.getElementById("clientSchool").value;
+    const selectedHairstyle = document.getElementById("hairstyle").value;
+    const barberList = document.getElementById("barberList");
+    barberList.innerHTML = "";
 
-        if (!school) return;
+    if (!school) return; // Exit if no school is selected
 
-        // Retrieve barbers from localStorage
-        const barbersBySchool = JSON.parse(localStorage.getItem('barbersBySchool')) || {};
-        let barbers = barbersBySchool[school] || [];
+    // Retrieve barbers from localStorage
+    const barbersBySchool = JSON.parse(localStorage.getItem('barbersBySchool')) || {};
+    let barbers = barbersBySchool[school] || [];
 
-        // Filter barbers by hairstyle if selected
-        if (selectedHairstyle) {
-            barbers = barbers.filter(barber => barber.hairstyles.includes(selectedHairstyle));
-        }
-
-        if (barbers.length === 0) {
-            barberList.innerHTML = "<p>No barbers available for this school and hairstyle.</p>";
-            return;
-        }
-
-        // Display barbers as buttons
-        barbers.forEach(barber => {
-            const button = document.createElement("button");
-            button.classList.add("barber-button");
-            button.innerHTML = `
-                <strong>${barber.name}</strong><br>
-                <span>${barber.location}</span><br>
-                <span>Hairstyles: ${barber.hairstyles.length ? barber.hairstyles.join(", ") : "Not specified"}</span><br>
-                <span>Available Days: ${barber.days ? barber.days.join(", ") : "Not specified"}</span><br>
-                <span>Available Times: ${formatTimeSlots(barber.timeslots)}</span>
-            `;
-            button.onclick = () => selectBarber(barber, button);
-            barberList.appendChild(button);
-        });
+    // Filter barbers by hairstyle if selected
+    if (selectedHairstyle) {
+        barbers = barbers.filter(barber => barber.hairstyles.includes(selectedHairstyle));
     }
 
-    function formatTimeSlots(timeslots) {
-        return timeslots && timeslots.length
-            ? timeslots.filter(time => time).join(", ")
-            : "Not specified";
+    // If no barbers are found, display a message
+    if (barbers.length === 0) {
+        barberList.innerHTML = "<p>No barbers available for this school and hairstyle.</p>";
+        return;
     }
+
+    // Display barbers as buttons
+    barbers.forEach(barber => {
+        const button = document.createElement("button");
+        button.classList.add("barber-button");
+        button.innerHTML = `
+            <strong>${barber.name}</strong><br>
+            <span>${barber.location}</span><br>
+            <span>Hairstyles: ${barber.hairstyles.length ? barber.hairstyles.join(", ") : "Not specified"}</span><br>
+            <span>Available Days: ${barber.days ? barber.days.join(", ") : "Not specified"}</span><br>
+            <span>Available Times: ${formatTimeSlots(barber.timeslots)}</span>
+        `;
+        button.onclick = () => selectBarber(barber, button);
+        barberList.appendChild(button);
+    });
+}
+
+function formatTimeSlots(timeslots) {
+    return timeslots && timeslots.length
+        ? timeslots.filter(time => time).join(", ")
+        : "Not specified";
+}
 
     function selectBarber(barber, button) {
         document.querySelectorAll(".barber-button").forEach(btn => btn.classList.remove("selected"));
