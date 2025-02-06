@@ -144,6 +144,11 @@
           filteredBarbers = barbers.filter(barber => barber.hairstyles.includes(hairstyle));
         }
 
+        // Display all barbers if no hairstyle is selected
+        if (!hairstyle) {
+          filteredBarbers = barbers;
+        }
+
         // If there are matching barbers, display them
         if (filteredBarbers.length > 0) {
           filteredBarbers.forEach(barber => {
@@ -165,7 +170,6 @@
     }
 
     function formatTimeSlots(timeslots) {
-      // Assuming timeslots are stored as an array ["08:00-12:00", "14:00-18:00"]
       if (!timeslots || timeslots.length === 0) {
         return "Not specified";
       }
@@ -173,14 +177,11 @@
     }
 
     function selectBarber(barber, button) {
-      // Remove previous selection
       document.querySelectorAll(".barber-button").forEach(btn => btn.classList.remove("selected"));
 
-      // Mark this barber as selected
       button.classList.add("selected");
       selectedBarber = barber;
 
-      // Show the submit button
       document.getElementById("submitAppointment").style.display = "block";
     }
 
@@ -199,7 +200,6 @@
         timeSlots: selectedBarber.timeslots
       };
 
-      // Store client request
       const clientRequests = JSON.parse(localStorage.getItem("clientRequests")) || [];
       clientRequests.push(clientData);
       localStorage.setItem("clientRequests", JSON.stringify(clientRequests));
