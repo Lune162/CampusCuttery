@@ -19,7 +19,7 @@
     }
     .container {
       width: 100%;
-      max-width: 600px; /* Set a max width for the form */
+      max-width: 600px;
       padding: 20px;
       box-sizing: border-box;
     }
@@ -33,30 +33,27 @@
       margin: 10px 0;
       font-size: 16px;
       box-sizing: border-box; /* Ensures padding doesn't affect width */
-      width: 100%; /* Make the inputs and select take the full width */
-    }
-    input, select {
-      width: 100%; /* Make the text fields and dropdown 100% wide */
+      width: 100%;
     }
     button {
       background: #ffcc00;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      font-size: 14px; /* Smaller font size for the button */
-      padding: 10px 20px; /* Adjusted padding for a smaller button */
-      width: 100%; /* Ensure button width remains consistent */
+      font-size: 14px;
+      padding: 10px 20px;
+      width: 100%;
     }
     button:hover {
       background: #ff9900;
     }
     select {
-      -webkit-appearance: none;  /* Remove default dropdown styling in webkit browsers */
-      -moz-appearance: none;     /* Remove default dropdown styling in Firefox */
-      appearance: none;          /* Remove default dropdown styling */
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
       background: #fff url('https://upload.wikimedia.org/wikipedia/commons/a/a5/Down_triangle.svg') no-repeat right center;
       background-size: 16px;
-      padding-right: 35px;       /* Add space for the arrow */
+      padding-right: 35px;
     }
     .contact {
       margin-top: 30px;
@@ -101,7 +98,7 @@
         <option value="jmu">James Madison University</option>
       </select>
 
-      <select name="hairstyle" id="hairstyle" required>
+      <select name="hairstyle" id="hairstyle" required onchange="displayBarbers()">
         <option value="">Select a Hairstyle</option>
         <option value="beard trim">Beard Trim</option>
         <option value="buzz cut">Buzz Cut</option>
@@ -143,18 +140,22 @@
       window.location.href = "appointment.html";
     });
 
-    // Display barbers based on selected school
+    // Display barbers based on selected school and hairstyle
     function displayBarbers() {
       const school = document.getElementById("clientSchool").value;
+      const hairstyle = document.getElementById("hairstyle").value;
       const barberList = document.getElementById("barberList");
       barberList.innerHTML = ""; // Clear existing barbers list
 
-      if (school) {
+      if (school && hairstyle) {
         const barbersBySchool = JSON.parse(localStorage.getItem('barbersBySchool')) || {};
         const barbers = barbersBySchool[school] || [];
 
-        if (barbers.length > 0) {
-          barbers.forEach(barber => {
+        // Filter barbers by selected hairstyle
+        const filteredBarbers = barbers.filter(barber => barber.hairstyles.includes(hairstyle));
+
+        if (filteredBarbers.length > 0) {
+          filteredBarbers.forEach(barber => {
             const li = document.createElement("li");
             li.classList.add("barber-item");
             li.innerHTML = `
@@ -162,11 +163,14 @@
               <p>Phone: ${barber.phone}</p>
               <p>Location: ${barber.location}</p>
               <p>Hairstyles: ${barber.hairstyles.join(", ")}</p>
+              <p>Available Times: ${barber.days.map(day => {
+                return `${day}: ${barber.times[day].join(", ")}`;
+              }).join(", ")}</p>
             `;
             barberList.appendChild(li);
           });
         } else {
-          barberList.innerHTML = "<p>No barbers available for this school.</p>";
+          barberList.innerHTML = "<p>No barbers available for this school and hairstyle.</p>";
         }
       }
     }
