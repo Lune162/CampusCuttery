@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Barber Dashboard - Campus Cuttery</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f8ff;
+      color: #333;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      width: 100%;
+      max-width: 800px;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .client-item {
+      background: #fff;
+      padding: 15px;
+      margin: 10px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .client-item p {
+      margin: 5px 0;
+    }
+    .btn {
+      padding: 5px 10px;
+      margin: 5px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 3px;
+    }
+    .btn.reject {
+      background-color: #f44336;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Barber Dashboard</h1>
+    <h2>Your Appointment Requests</h2>
+    <div id="clientRequests"></div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const barber = JSON.parse(localStorage.getItem("selectedBarber"));
+      const clientRequests = JSON.parse(localStorage.getItem("clientRequests")) || [];
+
+      const clientRequestsDiv = document.getElementById("clientRequests");
+      clientRequestsDiv.innerHTML = ""; // Clear existing requests
+
+      if (barber) {
+        const barberRequests = clientRequests.filter(request => request.barberEmail === barber.email);
+
+        if (barberRequests.length > 0) {
+          barberRequests.forEach(request => {
+            const div = document.createElement("div");
+            div.classList.add("client-item");
+            div.innerHTML = `
+              <p><strong>Client:</strong> ${request.clientEmail}</p>
+              <p><strong>Phone:</strong> ${request.clientPhone}</p>
+              <p><strong>Hairstyle:</strong> ${request.hairstyle}</p>
+              <p><strong>Time Slot:</strong> ${request.time}</p>
+              <button class="btn accept" onclick="acceptRequest('${request.clientEmail}')">Accept</button>
+              <button class="btn reject" onclick="rejectRequest('${request.clientEmail}')">Reject</button>
+            `;
+            clientRequestsDiv.appendChild(div);
+          });
+        } else {
+          clientRequestsDiv.innerHTML = "<p>No appointment requests.</p>";
+        }
+      } else {
+        clientRequestsDiv.innerHTML = "<p>No barber selected or logged in.</p>";
+      }
+    });
+
+    // Function to accept an appointment
+    function acceptRequest(clientEmail) {
+      alert(`Appointment accepted for ${clientEmail}.`);
+      // Logic for accepting request, e.g., updating the request status or notifying the client
+    }
+
+    // Function to reject an appointment
+    function rejectRequest(clientEmail) {
+      alert(`Appointment rejected for ${clientEmail}.`);
+      // Logic for rejecting request, e.g., removing from the list or notifying the client
+    }
+  </script>
+
+</body>
+</html>

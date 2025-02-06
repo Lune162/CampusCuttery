@@ -16,8 +16,26 @@ document.addEventListener("DOMContentLoaded", function () {
             // Save client data to localStorage
             localStorage.setItem("clientData", JSON.stringify(clientData));
 
-            alert("Client registered successfully!");
+            // Get selected barber info (if selected)
+            const selectedBarber = JSON.parse(localStorage.getItem("selectedBarber"));
+            if (selectedBarber) {
+                const appointmentRequest = {
+                    clientEmail: clientData.email,
+                    clientPhone: clientData.phone,
+                    hairstyle: clientData.hairstyle,
+                    barberEmail: selectedBarber.email,
+                    time: "Selected Time Here" // Placeholder for time
+                };
 
+                // Store appointment request in localStorage
+                const clientRequests = JSON.parse(localStorage.getItem("clientRequests")) || [];
+                clientRequests.push(appointmentRequest);
+                localStorage.setItem("clientRequests", JSON.stringify(clientRequests));
+
+                alert("Appointment request sent to barber!");
+            }
+
+            alert("Client registered successfully!");
             // Optionally, redirect after successful form submission (uncomment below line to enable redirection)
             // window.location.href = "appointment.html";
         });
@@ -45,6 +63,15 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+// Handle Barber Selection
+function selectBarber(barber) {
+    // Save selected barber info in localStorage
+    localStorage.setItem("selectedBarber", JSON.stringify(barber));
+
+    // Alert the user that the barber has been selected
+    alert(`You selected ${barber.email} for your appointment.`);
+}
 
 // Handle Stripe Payment
 function processPayment(paymentMethodId) {

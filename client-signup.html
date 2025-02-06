@@ -32,7 +32,7 @@
       padding: 10px;
       margin: 10px 0;
       font-size: 16px;
-      box-sizing: border-box; /* Ensures padding doesn't affect width */
+      box-sizing: border-box;
       width: 100%;
     }
     button {
@@ -55,28 +55,37 @@
       background-size: 16px;
       padding-right: 35px;
     }
-    .contact {
-      margin-top: 30px;
-    }
-    .contact a {
-      color: #ff3366;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .contact a:hover {
-      text-decoration: underline;
-    }
     .barber-list {
       margin-top: 20px;
       list-style: none;
       padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
     }
-    .barber-item {
-      background: #fff;
-      padding: 10px;
+    .barber-button {
+      background-color: #ffcc00;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 8px;
       margin: 10px;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s, transform 0.3s;
+      width: 100%;
+      max-width: 300px; /* Ensure the button doesn't get too large */
+      text-align: left;
+    }
+    .barber-button:hover {
+      background-color: #ff9900;
+    }
+    .barber-button.selected {
+      background-color: #ff6600;
+    }
+    .barber-info {
+      margin-top: 10px;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -89,7 +98,6 @@
       <input type="tel" id="clientPhone" name="phone" placeholder="Phone Number" required>
       <input type="text" id="clientAddress" name="address" placeholder="Nearest Address (Dorm/College)" required>
       
-      <!-- School Dropdown -->
       <select name="school" id="clientSchool" required onchange="displayBarbers()">
         <option value="">Select School</option>
         <option value="uva">University of Virginia</option>
@@ -119,7 +127,7 @@
 
     <!-- Barber List Section -->
     <h2>Available Barbers</h2>
-    <ul id="barberList" class="barber-list"></ul>
+    <div id="barberList"></div>
   </div>
 
   <script>
@@ -134,10 +142,11 @@
         hairstyle: document.getElementById("hairstyle").value
       };
 
+      // Store client data
       localStorage.setItem("clientData", JSON.stringify(clientData));
 
       alert("Client registered successfully!");
-      window.location.href = "appointment.html";
+      window.location.href = "appointment.html"; // Redirect to appointment confirmation page
     });
 
     // Display barbers based on selected school and hairstyle
@@ -156,23 +165,31 @@
 
         if (filteredBarbers.length > 0) {
           filteredBarbers.forEach(barber => {
-            const li = document.createElement("li");
-            li.classList.add("barber-item");
-            li.innerHTML = `
-              <h3>${barber.email}</h3>
-              <p>Phone: ${barber.phone}</p>
-              <p>Location: ${barber.location}</p>
-              <p>Hairstyles: ${barber.hairstyles.join(", ")}</p>
-              <p>Available Times: ${barber.days.map(day => {
-                return `${day}: ${barber.times[day].join(", ")}`;
-              }).join(", ")}</p>
+            const button = document.createElement("button");
+            button.classList.add("barber-button");
+            button.innerHTML = `
+              <strong>${barber.name}</strong><br>
+              <span>${barber.location}</span><br>
+              <span>Available: ${barber.availability}</span>
             `;
-            barberList.appendChild(li);
+            button.onclick = () => selectBarber(barber);
+            barberList.appendChild(button);
           });
         } else {
           barberList.innerHTML = "<p>No barbers available for this school and hairstyle.</p>";
         }
       }
+    }
+
+    // Select a barber
+    function selectBarber(barber) {
+      alert(`You selected ${barber.name} for your appointment.`);
+
+      // Store selected barber info in localStorage
+      localStorage.setItem("selectedBarber", JSON.stringify(barber));
+
+      // Optionally, redirect to appointment confirmation page
+      // window.location.href = "appointment-confirmation.html";
     }
   </script>
 
