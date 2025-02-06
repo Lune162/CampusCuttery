@@ -9,6 +9,11 @@ document.addEventListener("DOMContentLoaded", () => {
             let email = document.getElementById("email").value;
             let password = document.getElementById("password").value;
 
+            // Debugging: Log the form data
+            console.log("Name:", name);
+            console.log("Email:", email);
+            console.log("Password:", password);
+
             // Validate form data
             if (!name || !email || !password) {
                 alert("Please fill in all fields!");
@@ -24,6 +29,10 @@ document.addEventListener("DOMContentLoaded", () => {
             localStorage.setItem("loggedInBarber", email);
 
             alert("Signup successful!");
+
+            // Debugging: Check localStorage for saved barbers
+            console.log("Updated Barbers:", JSON.parse(localStorage.getItem("barbers")));
+
             window.location.href = "dashboard.html"; // Redirect to dashboard after signup
         });
     }
