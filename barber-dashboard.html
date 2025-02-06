@@ -6,46 +6,102 @@
   <title>Barber Dashboard - Campus Cuttery</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f0f8ff;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
       color: #333;
-      text-align: center;
       margin: 0;
       padding: 0;
       display: flex;
       justify-content: center;
-      align-items: flex-start; /* Aligns items to the top */
-      height: 100vh; /* Ensures full screen height */
+      align-items: flex-start;
+      height: 100vh;
     }
+    
     .container {
-      width: 100%;
+      background: white;
       max-width: 800px;
+      width: 90%;
       padding: 20px;
-      box-sizing: border-box;
-      text-align: left; /* Align content to the left */
-      margin-top: 20px; /* Optional: add some space from the top */
+      margin-top: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      animation: fadeIn 0.5s ease-in-out;
     }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-size: 2.5em;
+      color: #ff3366;
+    }
+
+    .welcome-message {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #555;
+      margin-bottom: 15px;
+    }
+
+    .client-requests-container {
+      margin-top: 20px;
+      text-align: left;
+    }
+
     .client-item {
-      background: #fff;
+      background: #f9f9f9;
       padding: 15px;
-      margin: 10px;
-      border-radius: 5px;
+      margin: 10px 0;
+      border-radius: 8px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease-in-out;
     }
+
+    .client-item:hover {
+      transform: scale(1.02);
+    }
+
     .client-item p {
       margin: 5px 0;
+      font-size: 1em;
     }
+
     .btn {
-      padding: 5px 10px;
+      padding: 10px 15px;
       margin: 5px;
+      border: none;
+      border-radius: 5px;
       cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .btn.accept {
       background-color: #4CAF50;
       color: white;
-      border: none;
-      border-radius: 3px;
     }
+
+    .btn.accept:hover {
+      background-color: #45a049;
+    }
+
     .btn.reject {
       background-color: #f44336;
+      color: white;
+    }
+
+    .btn.reject:hover {
+      background-color: #d32f2f;
+    }
+    
+    .no-requests {
+      font-size: 1.1em;
+      color: #777;
+      font-style: italic;
+      margin-top: 20px;
     }
   </style>
 </head>
@@ -53,29 +109,25 @@
 
   <div class="container">
     <h1>Barber Dashboard</h1>
+    <p class="welcome-message" id="welcomeMessage">Welcome, Barber!</p>
     <h2>Your Appointment Requests</h2>
-    <div id="clientRequests"></div>
+    <div id="clientRequests" class="client-requests-container"></div>
   </div>
 
   <script>
-    // On document load, check if a barber is logged in and show their requests
     document.addEventListener("DOMContentLoaded", function() {
-      // Retrieve the barber data from localStorage (this should be saved during login)
       const barber = JSON.parse(localStorage.getItem("loggedInBarber")); 
-      
-      // Retrieve all client requests from localStorage
       const clientRequests = JSON.parse(localStorage.getItem("clientRequests")) || [];
 
-      // Get the div to display requests
+      const welcomeMessage = document.getElementById("welcomeMessage");
       const clientRequestsDiv = document.getElementById("clientRequests");
-      clientRequestsDiv.innerHTML = ""; // Clear existing requests
+      clientRequestsDiv.innerHTML = ""; 
 
-      // If the barber is logged in, filter the requests for that barber
       if (barber) {
-        // Filter the client requests for this barber's email
+        welcomeMessage.textContent = `Welcome, ${barber.name}!`;
+
         const barberRequests = clientRequests.filter(request => request.barberEmail === barber.email);
 
-        // If there are barber-specific requests, display them
         if (barberRequests.length > 0) {
           barberRequests.forEach(request => {
             const div = document.createElement("div");
@@ -91,27 +143,19 @@
             clientRequestsDiv.appendChild(div);
           });
         } else {
-          clientRequestsDiv.innerHTML = "<p>No appointment requests.</p>";
+          clientRequestsDiv.innerHTML = `<p class="no-requests">No appointment requests at the moment.</p>`;
         }
       } else {
-        clientRequestsDiv.innerHTML = "<p>No barber logged in. Please sign up or log in.</p>";
+        clientRequestsDiv.innerHTML = `<p class="no-requests">No barber logged in. Please sign up or log in.</p>`;
       }
     });
 
-    // Function to handle accepting a request
     function acceptRequest(clientEmail) {
       alert(`Appointment accepted for ${clientEmail}.`);
-
-      // Logic for accepting request could be implemented here
-      // For instance, you could update the request status in localStorage
     }
 
-    // Function to handle rejecting a request
     function rejectRequest(clientEmail) {
       alert(`Appointment rejected for ${clientEmail}.`);
-
-      // Logic for rejecting request could be implemented here
-      // For example, remove the request from the list or mark it as rejected
     }
   </script>
 
