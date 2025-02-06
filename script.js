@@ -1,7 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    if (document.getElementById("availabilityList")) {
-        displayAvailability();
-    }
+    displayAvailability();
 });
 
 function getLoggedInBarber() {
@@ -10,16 +8,27 @@ function getLoggedInBarber() {
     return barbers.find(barber => barber.email === loggedInEmail);
 }
 
+// Dynamically create time inputs for selected days
+function updateTimeInputs() {
+    let checkboxes = document.querySelectorAll("#dayChecklist input[type='checkbox']:checked");
+    let timeInputsDiv = document.getElementById("timeInputs");
+    timeInputsDiv.innerHTML = ""; // Clear previous inputs
+
+    checkboxes.forEach(checkbox => {
+        let day = checkbox.value;
+        let div = document.createElement("div");
+        div.innerHTML = `
+            <label>${day}: </label>
+            <input type="time" id="start-${day}" placeholder="Start Time">
+            <input type="time" id="end-${day}" placeholder="End Time">
+        `;
+        timeInputsDiv.appendChild(div);
+    });
+}
+
+// Save availability for selected days
 function setAvailability() {
-    let day = document.getElementById("availableDay").value;
-    let startTime = document.getElementById("startTime").value;
-    let endTime = document.getElementById("endTime").value;
-
-    if (!startTime || !endTime) {
-        alert("Please select a valid time range.");
-        return;
-    }
-
+    let checkboxes = document.querySelectorAll("#dayChecklist input[type='checkbox']:checked");
     let barbers = JSON.parse(localStorage.getItem("barbers")) || [];
     let loggedInEmail = localStorage.getItem("loggedInBarber");
     let barberIndex = barbers.findIndex(barber => barber.email === loggedInEmail);
@@ -29,18 +38,28 @@ function setAvailability() {
         return;
     }
 
-    // Ensure the availability list exists
     if (!barbers[barberIndex].availability) {
         barbers[barberIndex].availability = [];
     }
 
-    // Check if the day already exists, update instead of adding duplicate entries
-    let existingIndex = barbers[barberIndex].availability.findIndex(slot => slot.day === day);
-    if (existingIndex !== -1) {
-        barbers[barberIndex].availability[existingIndex] = { day, startTime, endTime };
-    } else {
-        barbers[barberIndex].availability.push({ day, startTime, endTime });
-    }
+    checkboxes.forEach(checkbox => {
+        let day = checkbox.value;
+        let startTime = document.getElementById(`start-${day}`).value;
+        let endTime = document.getElementById(`end-${day}`).value;
+
+        if (!startTime || !endTime) {
+            alert(`Please set a valid time range for ${day}.`);
+            return;
+        }
+
+        // Check if the day already exists, update instead of adding duplicate entries
+        let existingIndex = barbers[barberIndex].availability.findIndex(slot => slot.day === day);
+        if (existingIndex !== -1) {
+            barbers[barberIndex].availability[existingIndex] = { day, startTime, endTime };
+        } else {
+            barbers[barberIndex].availability.push({ day, startTime, endTime });
+        }
+    });
 
     localStorage.setItem("barbers", JSON.stringify(barbers));
 
@@ -48,6 +67,7 @@ function setAvailability() {
     displayAvailability();
 }
 
+// Display availability
 function displayAvailability() {
     let loggedInBarber = getLoggedInBarber();
     if (!loggedInBarber) return;
@@ -59,7 +79,6 @@ function displayAvailability() {
         let li = document.createElement("li");
         li.innerText = `${slot.day}: ${slot.startTime} - ${slot.endTime}`;
 
-        // Remove button for each availability slot
         let removeBtn = document.createElement("button");
         removeBtn.textContent = "Remove";
         removeBtn.onclick = () => removeAvailability(index);
@@ -69,6 +88,7 @@ function displayAvailability() {
     });
 }
 
+// Remove availability
 function removeAvailability(index) {
     let barbers = JSON.parse(localStorage.getItem("barbers")) || [];
     let loggedInEmail = localStorage.getItem("loggedInBarber");
