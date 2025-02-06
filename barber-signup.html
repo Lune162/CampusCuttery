@@ -6,7 +6,7 @@
   <title>Barber Sign Up - Campus Cuttery</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Poppins', sans-serif;
       background: #e6e6fa;
       color: #333;
       text-align: center;
@@ -20,23 +20,61 @@
     input, select, button {
       display: block;
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       margin: 10px 0;
       font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      outline: none;
+      box-sizing: border-box;
+      transition: all 0.3s ease;
     }
+    input:focus, select:focus {
+      border-color: #ff6600;
+    }
+
     button {
-      background: #ffcc00;
+      background-color: #ff6600;
+      color: white;
       border: none;
-      border-radius: 5px;
       cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
     }
+
     button:hover {
-      background: #ff9900;
+      background-color: #ff9900;
     }
+
+    /* Hairstyle Buttons */
+    .hairstyle-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-evenly;
+      margin-top: 10px;
+    }
+    .hairstyle-button {
+      background-color: #ffcc00;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      margin: 5px;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+    .hairstyle-button:hover {
+      background-color: #ff9900;
+    }
+    .hairstyle-button.selected {
+      background-color: #ff6600;
+    }
+
     .days-container {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+      gap: 15px;
       margin-top: 20px;
     }
     .day {
@@ -48,26 +86,21 @@
       display: none; /* Hide time slots initially */
       margin-top: 10px;
     }
+
     .time-slot {
       margin-top: 5px;
-    }
-    .hairstyles-container {
-      text-align: left;
-      margin-top: 10px;
-    }
-    .hairstyles-container label {
-      display: block;
-      margin: 5px 0;
     }
   </style>
 </head>
 <body>
+
   <h1>Barber Sign Up</h1>
   <form id="barberForm" action="barber-dashboard.html" method="get">
+
     <input type="email" name="email" placeholder="Email" required>
     <input type="tel" name="phone" placeholder="Phone Number" required>
-
-    <!-- School Dropdown without label text -->
+    
+    <!-- School Dropdown -->
     <select name="school" id="school" required>
       <option value="">Choose your School</option>
       <option value="uva">University of Virginia</option>
@@ -77,21 +110,21 @@
     </select>
 
     <input type="text" name="location" placeholder="Location" required>
-    
-    <!-- Hairstyle Checkboxes -->
+
+    <!-- Hairstyle Buttons -->
     <label>Hairstyles you are proficient at:</label>
-    <div class="hairstyles-container">
-      <label><input type="checkbox" name="hairstyles" value="beard trim"> Beard Trim</label>
-      <label><input type="checkbox" name="hairstyles" value="buzz cut"> Buzz Cut</label>
-      <label><input type="checkbox" name="hairstyles" value="bald"> Bald</label>
-      <label><input type="checkbox" name="hairstyles" value="mullet"> Mullet</label>
-      <label><input type="checkbox" name="hairstyles" value="low taper fade"> Low Taper Fade</label>
-      <label><input type="checkbox" name="hairstyles" value="blowout taper"> Blowout Taper</label>
-      <label><input type="checkbox" name="hairstyles" value="textured fringe"> Textured Fringe</label>
-      <label><input type="checkbox" name="hairstyles" value="wolfcut"> Wolfcut</label>
-      <label><input type="checkbox" name="hairstyles" value="middle part"> Middle Part</label>
-      <label><input type="checkbox" name="hairstyles" value="straightened hair"> Straightened Hair</label>
-      <label><input type="checkbox" name="hairstyles" value="dyed hair"> Dyed Hair</label>
+    <div class="hairstyle-buttons">
+      <button type="button" class="hairstyle-button" onclick="toggleSelection(this)">Beard Trim</button>
+      <button type="button" class="hairstyle-button" onclick="toggleSelection(this)">Buzz Cut</button>
+      <button type="button" class="hairstyle-button" onclick="toggleSelection(this)">Bald</button>
+      <button type="button" class="hairstyle-button" onclick="toggleSelection(this)">Mullet</button>
+      <button type="button" class="hairstyle-button" onclick="toggleSelection(this)">Low Taper Fade</button>
+      <button type="button" class="hairstyle-button" onclick="toggleSelection(this)">Blowout Taper</button>
+      <button type="button" class="hairstyle-button" onclick="toggleSelection(this)">Textured Fringe</button>
+      <button type="button" class="hairstyle-button" onclick="toggleSelection(this)">Wolfcut</button>
+      <button type="button" class="hairstyle-button" onclick="toggleSelection(this)">Middle Part</button>
+      <button type="button" class="hairstyle-button" onclick="toggleSelection(this)">Straightened Hair</button>
+      <button type="button" class="hairstyle-button" onclick="toggleSelection(this)">Dyed Hair</button>
     </div>
 
     <label>Available Days and Hours:</label>
@@ -161,6 +194,12 @@
         timeSlotDiv.style.display = 'none';  // Hide time slots if day is not selected
       }
     }
+
+    // Toggle selection of hairstyle buttons
+    function toggleSelection(button) {
+      button.classList.toggle('selected');
+    }
   </script>
+
 </body>
 </html>
