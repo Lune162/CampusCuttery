@@ -204,9 +204,10 @@
     }
 
     function handleSubmit(event) {
-      event.preventDefault();
+    event.preventDefault();
 
-      const barberData = {
+    // Capture barber form data
+    const barberData = {
         name: document.getElementById('barberName').value,
         email: document.getElementById('barberEmail').value,
         password: document.getElementById('barberPassword').value,
@@ -214,26 +215,35 @@
         location: document.getElementById('location').value,
         school: document.getElementById('school').value,
         hairstyles: Array.from(document.getElementsByClassName('hairstyle-button'))
-          .filter(button => button.classList.contains('selected'))
-          .map(button => button.innerText),
+            .filter(button => button.classList.contains('selected'))
+            .map(button => button.innerText),
         days: Array.from(document.querySelectorAll('input[name="days"]:checked')).map(day => day.value),
         timeslots: Array.from(document.querySelectorAll('.timeslot-container input'))
-          .map(input => input.value)
-      };
+            .map(input => input.value)
+    };
 
-      const barbersBySchool = JSON.parse(localStorage.getItem('barbersBySchool')) || {};
-      if (!barbersBySchool[barberData.school]) {
+    console.log("Barber Data:", barberData); // Debugging
+
+    // Retrieve existing barbers from localStorage or initialize as empty object
+    let barbersBySchool = JSON.parse(localStorage.getItem('barbersBySchool')) || {};
+
+    // If no school entry exists, create one
+    if (!barbersBySchool[barberData.school]) {
         barbersBySchool[barberData.school] = [];
-      }
-      barbersBySchool[barberData.school].push(barberData);
-      localStorage.setItem('barbersBySchool', JSON.stringify(barbersBySchool));
-
-      // Store barber data as 'logged in'
-      localStorage.setItem('loggedInBarber', JSON.stringify(barberData));
-
-      alert('Barber signed up successfully!');
-      window.location.href = 'barber-dashboard.html'; // Redirect to barber dashboard
     }
+
+    // Add new barber to the correct school
+    barbersBySchool[barberData.school].push(barberData);
+
+    // Save the updated barbersBySchool back to localStorage
+    localStorage.setItem('barbersBySchool', JSON.stringify(barbersBySchool));
+
+    // Optionally, store barber data as 'loggedInBarber' for future use
+    localStorage.setItem('loggedInBarber', JSON.stringify(barberData));
+
+    alert('Barber signed up successfully!');
+    window.location.href = 'barber-dashboard.html'; // Redirect to barber dashboard
+}
   </script>
 
 </body>
