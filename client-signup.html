@@ -90,6 +90,22 @@
         <option value="william-mary">William and Mary</option>
         <option value="jmu">James Madison University</option>
       </select>
+
+      <select name="hairstyle" id="hairstyle" onchange="displayBarbers()">
+        <option value="">Select a Hairstyle (Optional)</option>
+        <option value="beard trim">Beard Trim</option>
+        <option value="buzz cut">Buzz Cut</option>
+        <option value="bald">Bald</option>
+        <option value="mullet">Mullet</option>
+        <option value="low taper fade">Low Taper Fade</option>
+        <option value="blowout taper">Blowout Taper</option>
+        <option value="textured fringe">Textured Fringe</option>
+        <option value="wolfcut">Wolfcut</option>
+        <option value="middle part">Middle Part</option>
+        <option value="straightened hair">Straightened Hair</option>
+        <option value="dyed hair">Dyed Hair</option>
+        <option value="other">Other</option>
+      </select>
     </form>
 
     <h2>Available Barbers</h2>
@@ -103,17 +119,23 @@
 
     function displayBarbers() {
         const school = document.getElementById("clientSchool").value;
+        const selectedHairstyle = document.getElementById("hairstyle").value;
         const barberList = document.getElementById("barberList");
         barberList.innerHTML = "";
 
         if (!school) return;
 
-        // Get stored barbers from localStorage
+        // Retrieve barbers from localStorage
         const barbersBySchool = JSON.parse(localStorage.getItem('barbersBySchool')) || {};
-        const barbers = barbersBySchool[school] || [];
+        let barbers = barbersBySchool[school] || [];
+
+        // Filter barbers by hairstyle if selected
+        if (selectedHairstyle) {
+            barbers = barbers.filter(barber => barber.hairstyles.includes(selectedHairstyle));
+        }
 
         if (barbers.length === 0) {
-            barberList.innerHTML = "<p>No barbers available for this school.</p>";
+            barberList.innerHTML = "<p>No barbers available for this school and hairstyle.</p>";
             return;
         }
 
