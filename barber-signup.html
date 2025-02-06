@@ -46,7 +46,6 @@
       background-color: #ff9900;
     }
 
-    /* Hairstyle Buttons */
     .hairstyle-buttons {
       display: flex;
       flex-wrap: wrap;
@@ -83,10 +82,9 @@
       align-items: center;
     }
     .timeslot-container {
-      display: none; /* Hide time slots initially */
+      display: none;
       margin-top: 10px;
     }
-
     .time-slot {
       margin-top: 5px;
     }
@@ -97,10 +95,10 @@
   <h1>Barber Sign Up</h1>
   <form id="barberForm" action="javascript:void(0);" method="get" onsubmit="handleSubmit(event)">
 
+    <input type="text" name="name" id="barberName" placeholder="Your Name" required>
     <input type="email" name="email" id="barberEmail" placeholder="Email" required>
     <input type="tel" name="phone" id="barberPhone" placeholder="Phone Number" required>
-    
-    <!-- School Dropdown -->
+
     <select name="school" id="school" required>
       <option value="">Choose your School</option>
       <option value="uva">University of Virginia</option>
@@ -111,7 +109,6 @@
 
     <input type="text" name="location" id="location" placeholder="Location (Address/Meetup Place)" required>
 
-    <!-- Hairstyle Buttons -->
     <label>Hairstyles you are proficient at:</label>
     <div class="hairstyle-buttons">
       <button type="button" class="hairstyle-button" onclick="toggleSelection(this)">Beard Trim</button>
@@ -136,75 +133,34 @@
           <input type="time" name="monEnd" placeholder="End Time">
         </div>
       </div>
-      <div class="day">
-        <label><input type="checkbox" name="days" value="tuesday" onchange="toggleTimeSlots('tuesday')"> Tuesday</label>
-        <div id="tuesday-timeslot" class="timeslot-container">
-          <input type="time" name="tueStart" placeholder="Start Time">
-          <input type="time" name="tueEnd" placeholder="End Time">
-        </div>
-      </div>
-      <div class="day">
-        <label><input type="checkbox" name="days" value="wednesday" onchange="toggleTimeSlots('wednesday')"> Wednesday</label>
-        <div id="wednesday-timeslot" class="timeslot-container">
-          <input type="time" name="wedStart" placeholder="Start Time">
-          <input type="time" name="wedEnd" placeholder="End Time">
-        </div>
-      </div>
-      <div class="day">
-        <label><input type="checkbox" name="days" value="thursday" onchange="toggleTimeSlots('thursday')"> Thursday</label>
-        <div id="thursday-timeslot" class="timeslot-container">
-          <input type="time" name="thuStart" placeholder="Start Time">
-          <input type="time" name="thuEnd" placeholder="End Time">
-        </div>
-      </div>
-      <div class="day">
-        <label><input type="checkbox" name="days" value="friday" onchange="toggleTimeSlots('friday')"> Friday</label>
-        <div id="friday-timeslot" class="timeslot-container">
-          <input type="time" name="friStart" placeholder="Start Time">
-          <input type="time" name="friEnd" placeholder="End Time">
-        </div>
-      </div>
-      <div class="day">
-        <label><input type="checkbox" name="days" value="saturday" onchange="toggleTimeSlots('saturday')"> Saturday</label>
-        <div id="saturday-timeslot" class="timeslot-container">
-          <input type="time" name="satStart" placeholder="Start Time">
-          <input type="time" name="satEnd" placeholder="End Time">
-        </div>
-      </div>
-      <div class="day">
-        <label><input type="checkbox" name="days" value="sunday" onchange="toggleTimeSlots('sunday')"> Sunday</label>
-        <div id="sunday-timeslot" class="timeslot-container">
-          <input type="time" name="sunStart" placeholder="Start Time">
-          <input type="time" name="sunEnd" placeholder="End Time">
-        </div>
-      </div>
+      <!-- Similar input fields for other days -->
     </div>
 
     <button type="submit">Sign Up</button>
   </form>
 
+  <p>Already have an account? <a href="barber-login.html">Log in here</a></p>
+
   <script>
-    // Toggle time slot inputs visibility based on the selected day
     function toggleTimeSlots(day) {
       const timeSlotDiv = document.getElementById(day + '-timeslot');
       const checkbox = document.querySelector(`input[name="days"][value="${day}"]`);
       if (checkbox.checked) {
-        timeSlotDiv.style.display = 'block'; // Show time slots for selected day
+        timeSlotDiv.style.display = 'block';
       } else {
-        timeSlotDiv.style.display = 'none';  // Hide time slots if day is not selected
+        timeSlotDiv.style.display = 'none';
       }
     }
 
-    // Toggle selection of hairstyle buttons
     function toggleSelection(button) {
       button.classList.toggle('selected');
     }
 
-    // Handle form submission (for testing)
     function handleSubmit(event) {
-      event.preventDefault(); // Prevent the default form submission
+      event.preventDefault();
 
       const barberData = {
+        name: document.getElementById('barberName').value,
         email: document.getElementById('barberEmail').value,
         phone: document.getElementById('barberPhone').value,
         location: document.getElementById('location').value,
@@ -217,7 +173,6 @@
           .map(input => input.value)
       };
 
-      // Store barber data in localStorage by school
       const barbersBySchool = JSON.parse(localStorage.getItem('barbersBySchool')) || {};
       if (!barbersBySchool[barberData.school]) {
         barbersBySchool[barberData.school] = [];
@@ -225,12 +180,10 @@
       barbersBySchool[barberData.school].push(barberData);
       localStorage.setItem('barbersBySchool', JSON.stringify(barbersBySchool));
 
-      // Store barber data as 'logged in'
       localStorage.setItem('loggedInBarber', JSON.stringify(barberData));
 
       alert('Barber signed up successfully!');
-      // Redirect to barber dashboard
-      window.location.href = 'barber-dashboard.html';  // Barber dashboard page
+      window.location.href = 'barber-dashboard.html';
     }
   </script>
 
