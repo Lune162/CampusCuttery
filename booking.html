@@ -18,7 +18,77 @@
     <h3>Rate Your Haircut</h3>
     <button onclick="leaveReview()" disabled id="rateBtn">Leave a Review</button>
 
-    <script src="script.js"></script>
-    <script src="stripe.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Load and display barbers on page load
+            displayBarbers();
+            
+            // Search functionality
+            document.getElementById("search").addEventListener("input", function() {
+                filterBarbers(this.value);
+            });
+        });
+
+        // Function to display all barbers
+        function displayBarbers() {
+            let barbers = JSON.parse(localStorage.getItem("barbers")) || [];
+            let barberList = document.getElementById("barberList");
+            barberList.innerHTML = "";
+
+            barbers.forEach(barber => {
+                let li = document.createElement("li");
+                li.innerText = `${barber.name} - ${barber.hairstyle}`;
+                barberList.appendChild(li);
+            });
+        }
+
+        // Function to filter barbers based on search input
+        function filterBarbers(searchText) {
+            let barbers = JSON.parse(localStorage.getItem("barbers")) || [];
+            let barberList = document.getElementById("barberList");
+            barberList.innerHTML = "";
+
+            barbers.forEach(barber => {
+                if (barber.hairstyle.toLowerCase().includes(searchText.toLowerCase())) {
+                    let li = document.createElement("li");
+                    li.innerText = `${barber.name} - ${barber.hairstyle}`;
+                    barberList.appendChild(li);
+                }
+            });
+        }
+
+        // Function to book a haircut
+        function bookHaircut() {
+            let clientName = document.getElementById("clientName").value;
+            if (!clientName) {
+                alert("Please enter your name!");
+                return;
+            }
+
+            // Save the booking in localStorage
+            let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+            bookings.push({ clientName, date: new Date().toLocaleString() });
+            localStorage.setItem("bookings", JSON.stringify(bookings));
+
+            alert("Your haircut is booked!");
+            document.getElementById("rateBtn").disabled = false; // Enable review button
+        }
+
+        // Function to leave a review for the haircut
+        function leaveReview() {
+            let review = prompt("Please leave your review:");
+            if (review) {
+                // Save the review in localStorage
+                let reviews = JSON.parse(localStorage.getItem("reviews")) || [];
+                reviews.push({ review, date: new Date().toLocaleString() });
+                localStorage.setItem("reviews", JSON.stringify(reviews));
+                alert("Review submitted!");
+            } else {
+                alert("Review was not submitted.");
+            }
+        }
+    </script>
+
+    <script src="stripe.js"></script> <!-- Assuming you want to integrate Stripe for payments -->
 </body>
 </html>
