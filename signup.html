@@ -1,19 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Barber Sign Up - Campus Cuttery</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #e6e6fa;
+      color: #333;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+    form {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    input, select, button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    button {
+      background: #ffcc00;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #ff9900;
+    }
+    .hours {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+  </style>
 </head>
 <body>
-    <h2>Barber Sign Up</h2>
-    <form id="signupForm">
-        <input type="text" id="name" placeholder="Full Name" required>
-        <input type="email" id="email" placeholder="Email" required>
-        <input type="password" id="password" placeholder="Password" required>
-        <button type="submit">Sign Up</button>
-    </form>
-    <script src="script.js"></script>
+  <h1>Barber Sign Up</h1>
+  <form id="barberForm" action="barber-dashboard.html" method="get">
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="tel" name="phone" placeholder="Phone Number" required>
+    <input type="text" name="location" placeholder="Location" required>
+    <label>Hairstyles you are proficient at:</label>
+    <select name="hairstyles" multiple required size="8">
+      <option value="beard trim">Beard Trim</option>
+      <option value="buzz cut">Buzz Cut</option>
+      <option value="bald">Bald</option>
+      <option value="mullet">Mullet</option>
+      <option value="low taper fade">Low Taper Fade</option>
+      <option value="blowout taper">Blowout Taper</option>
+      <option value="textured fringe">Textured Fringe</option>
+      <option value="wolfcut">Wolfcut</option>
+      <option value="middle part">Middle Part</option>
+      <option value="straightened hair">Straightened Hair</option>
+      <option value="dyed hair">Dyed Hair</option>
+    </select>
+    <label>Available Hours:</label>
+    <div class="hours">
+      <div>
+        <label>Mon Start</label>
+        <input type="time" name="monStart">
+        <label>Mon End</label>
+        <input type="time" name="monEnd">
+      </div>
+      <div>
+        <label>Tue Start</label>
+        <input type="time" name="tueStart">
+        <label>Tue End</label>
+        <input type="time" name="tueEnd">
+      </div>
+      <div>
+        <label>Wed Start</label>
+        <input type="time" name="wedStart">
+        <label>Wed End</label>
+        <input type="time" name="wedEnd">
+      </div>
+      <div>
+        <label>Thu Start</label>
+        <input type="time" name="thuStart">
+        <label>Thu End</label>
+        <input type="time" name="thuEnd">
+      </div>
+      <div>
+        <label>Fri Start</label>
+        <input type="time" name="friStart">
+        <label>Fri End</label>
+        <input type="time" name="friEnd">
+      </div>
+      <div>
+        <label>Sat Start</label>
+        <input type="time" name="satStart">
+        <label>Sat End</label>
+        <input type="time" name="satEnd">
+      </div>
+      <div>
+        <label>Sun Start</label>
+        <input type="time" name="sunStart">
+        <label>Sun End</label>
+        <input type="time" name="sunEnd">
+      </div>
+    </div>
+    <button type="submit">Sign Up</button>
+  </form>
 </body>
 </html>

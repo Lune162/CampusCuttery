@@ -1,94 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book a Barber</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Client Sign Up - Campus Cuttery</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f8ff;
+      color: #333;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+    form {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    input, select, button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    button {
+      background: #ffcc00;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #ff9900;
+    }
+  </style>
+  <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
-    <h2>Find a Barber</h2>
-    <input type="text" id="search" placeholder="Filter by hairstyle">
-    <ul id="barberList"></ul>
+  <h1>Client Sign Up</h1>
+  <form id="clientForm" action="appointment.html" method="get">
+    <input type="email" id="clientEmail" name="email" placeholder="Email" required>
+    <input type="tel" id="clientPhone" name="phone" placeholder="Phone Number" required>
+    <input type="text" id="clientAddress" name="address" placeholder="Nearest Address (Dorm/College)" required>
+    <select name="hairstyle" id="hairstyle" required onchange="toggleOther(this.value)">
+      <option value="">Select a Hairstyle</option>
+      <option value="beard trim">Beard Trim</option>
+      <option value="buzz cut">Buzz Cut</option>
+      <option value="bald">Bald</option>
+      <option value="mullet">Mullet</option>
+      <option value="low taper fade">Low Taper Fade</option>
+      <option value="blowout taper">Blowout Taper</option>
+      <option value="textured fringe">Textured Fringe</option>
+      <option value="wolfcut">Wolfcut</option>
+      <option value="middle part">Middle Part</option>
+      <option value="straightened hair">Straightened Hair</option>
+      <option value="dyed hair">Dyed Hair</option>
+      <option value="other">Other</option>
+    </select>
+    <input type="text" id="otherHairstyle" name="otherHairstyle" placeholder="Specify Hairstyle" style="display:none;">
+    <button type="submit">Submit Appointment Request</button>
+  </form>
 
-    <h3>Book a Haircut</h3>
-    <input type="text" id="clientName" placeholder="Your Name">
-    <button onclick="bookHaircut()">Confirm Booking</button>
+  <!-- Stripe Payment Form -->
+  <h2>Secure Payment</h2>
+  <form id="payment-form">
+    <input type="text" id="name" placeholder="Full Name" required>
+    <div id="card-element"><!-- Stripe Card Input --></div>
+    <button id="submit-payment">Pay Now</button>
+    <div id="payment-message"></div>
+  </form>
 
-    <h3>Rate Your Haircut</h3>
-    <button onclick="leaveReview()" disabled id="rateBtn">Leave a Review</button>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            // Load and display barbers on page load
-            displayBarbers();
-            
-            // Search functionality
-            document.getElementById("search").addEventListener("input", function() {
-                filterBarbers(this.value);
-            });
-        });
-
-        // Function to display all barbers
-        function displayBarbers() {
-            let barbers = JSON.parse(localStorage.getItem("barbers")) || [];
-            let barberList = document.getElementById("barberList");
-            barberList.innerHTML = "";
-
-            barbers.forEach(barber => {
-                let li = document.createElement("li");
-                li.innerText = `${barber.name} - ${barber.hairstyle}`;
-                barberList.appendChild(li);
-            });
-        }
-
-        // Function to filter barbers based on search input
-        function filterBarbers(searchText) {
-            let barbers = JSON.parse(localStorage.getItem("barbers")) || [];
-            let barberList = document.getElementById("barberList");
-            barberList.innerHTML = "";
-
-            barbers.forEach(barber => {
-                if (barber.hairstyle.toLowerCase().includes(searchText.toLowerCase())) {
-                    let li = document.createElement("li");
-                    li.innerText = `${barber.name} - ${barber.hairstyle}`;
-                    barberList.appendChild(li);
-                }
-            });
-        }
-
-        // Function to book a haircut
-        function bookHaircut() {
-            let clientName = document.getElementById("clientName").value;
-            if (!clientName) {
-                alert("Please enter your name!");
-                return;
-            }
-
-            // Save the booking in localStorage
-            let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
-            bookings.push({ clientName, date: new Date().toLocaleString() });
-            localStorage.setItem("bookings", JSON.stringify(bookings));
-
-            alert("Your haircut is booked!");
-            document.getElementById("rateBtn").disabled = false; // Enable review button
-        }
-
-        // Function to leave a review for the haircut
-        function leaveReview() {
-            let review = prompt("Please leave your review:");
-            if (review) {
-                // Save the review in localStorage
-                let reviews = JSON.parse(localStorage.getItem("reviews")) || [];
-                reviews.push({ review, date: new Date().toLocaleString() });
-                localStorage.setItem("reviews", JSON.stringify(reviews));
-                alert("Review submitted!");
-            } else {
-                alert("Review was not submitted.");
-            }
-        }
-    </script>
-
-    <script src="stripe.js"></script> <!-- Assuming you want to integrate Stripe for payments -->
+  <script>
+    function toggleOther(val) {
+      document.getElementById('otherHairstyle').style.display = (val === 'other') ? 'block' : 'none';
+    }
+  </script>
+  <script src="script.js"></script>
 </body>
 </html>

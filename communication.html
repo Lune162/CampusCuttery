@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Communication - Campus Cuttery</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #e0ffff;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+    .chat-container {
+      max-width: 600px;
+      margin: auto;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px;
+      background: #fff;
+    }
+    .messages {
+      height: 300px;
+      overflow-y: scroll;
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    input[type="text"] {
+      width: 80%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      background: #ffcc00;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #ff9900;
+    }
+  </style>
+</head>
+<body>
+  <h1>Communication</h1>
+  <div class="chat-container">
+    <div class="messages" id="messages">
+      <p>AI: How can I help you book an appointment?</p>
+    </div>
+    <input type="text" id="chatInput" placeholder="Type your message...">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+  <script>
+    function sendMessage() {
+      var input = document.getElementById('chatInput');
+      var msg = input.value.trim();
+      if (msg !== '') {
+        var messages = document.getElementById('messages');
+        var p = document.createElement('p');
+        p.textContent = 'You: ' + msg;
+        messages.appendChild(p);
+        input.value = '';
+        messages.scrollTop = messages.scrollHeight;
+      }
+    }
+  </script>
+</body>
+</html>
