@@ -95,10 +95,16 @@
   <h1>Barber Sign Up</h1>
   <form id="barberForm" action="javascript:void(0);" method="get" onsubmit="handleSubmit(event)">
 
+    <!-- Name Input -->
     <input type="text" name="name" id="barberName" placeholder="Your Name" required>
+
+    <!-- Email and Password -->
     <input type="email" name="email" id="barberEmail" placeholder="Email" required>
+    <input type="password" name="password" id="barberPassword" placeholder="Password" required>
+
     <input type="tel" name="phone" id="barberPhone" placeholder="Phone Number" required>
 
+    <!-- School Dropdown -->
     <select name="school" id="school" required>
       <option value="">Choose your School</option>
       <option value="uva">University of Virginia</option>
@@ -162,6 +168,7 @@
       const barberData = {
         name: document.getElementById('barberName').value,
         email: document.getElementById('barberEmail').value,
+        password: document.getElementById('barberPassword').value,
         phone: document.getElementById('barberPhone').value,
         location: document.getElementById('location').value,
         school: document.getElementById('school').value,
@@ -180,10 +187,11 @@
       barbersBySchool[barberData.school].push(barberData);
       localStorage.setItem('barbersBySchool', JSON.stringify(barbersBySchool));
 
+      // Store barber data as 'logged in'
       localStorage.setItem('loggedInBarber', JSON.stringify(barberData));
 
       alert('Barber signed up successfully!');
-      window.location.href = 'barber-dashboard.html';
+      window.location.href = 'barber-dashboard.html'; // Redirect to barber dashboard
     }
   </script>
 
