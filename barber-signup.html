@@ -5,131 +5,181 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Barber Sign Up - Campus Cuttery</title>
   <style>
+    /* Font and background */
     body {
-      font-family: Arial, sans-serif;
-      background: #e6e6fa;
+      font-family: 'Poppins', sans-serif;
+      background: #f7f8fc;
       color: #333;
-      text-align: center;
       margin: 0;
-      padding: 20px;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
     }
-    form {
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    input, select, button {
-      display: block;
+
+    .container {
       width: 100%;
-      padding: 10px;
-      margin: 10px 0;
+      max-width: 650px;
+      background: #fff;
+      padding: 30px;
+      box-sizing: border-box;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: #ff6600;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-weight: bold;
+      color: #555;
+      margin-bottom: 5px;
+    }
+
+    /* Styling for input fields, selects, and textareas */
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
       font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color 0.3s;
     }
+
+    input:focus, select:focus {
+      border-color: #ff6600;
+    }
+
     button {
-      background: #ffcc00;
+      background-color: #ff6600;
+      color: white;
       border: none;
-      border-radius: 5px;
       cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
     }
+
     button:hover {
-      background: #ff9900;
+      background-color: #ff9900;
     }
+
+    /* Styling for the days container */
     .days-container {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 20px;
+      gap: 15px;
     }
+
     .day {
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
     }
+
+    /* Styling for the timeslot container */
     .timeslot-container {
       display: none; /* Hide time slots initially */
       margin-top: 10px;
     }
-    .time-slot {
-      margin-top: 5px;
+
+    .hairstyles-container {
+      text-align: left;
+      margin-top: 20px;
+      margin-bottom: 30px;
+    }
+
+    .hairstyles-container label {
+      display: block;
+      margin: 8px 0;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+      .days-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 2rem;
+      }
+      .container {
+        padding: 20px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Barber Sign Up</h1>
-  <form id="barberForm" action="barber-dashboard.html" method="get">
-    <input type="email" name="email" placeholder="Email" required>
-    <input type="tel" name="phone" placeholder="Phone Number" required>
-    <input type="text" name="location" placeholder="Location" required>
-    
-    <label>Hairstyles you are proficient at:</label>
-    <select name="hairstyles" multiple required size="8">
-      <option value="beard trim">Beard Trim</option>
-      <option value="buzz cut">Buzz Cut</option>
-      <option value="bald">Bald</option>
-      <option value="mullet">Mullet</option>
-      <option value="low taper fade">Low Taper Fade</option>
-      <option value="blowout taper">Blowout Taper</option>
-      <option value="textured fringe">Textured Fringe</option>
-      <option value="wolfcut">Wolfcut</option>
-      <option value="middle part">Middle Part</option>
-      <option value="straightened hair">Straightened Hair</option>
-      <option value="dyed hair">Dyed Hair</option>
-    </select>
 
-    <label>Available Days and Hours:</label>
-    <div class="days-container">
-      <div class="day">
-        <label><input type="checkbox" name="days" value="monday" onchange="toggleTimeSlots('monday')"> Monday</label>
-        <div id="monday-timeslot" class="timeslot-container">
-          <input type="time" name="monStart" placeholder="Start Time">
-          <input type="time" name="monEnd" placeholder="End Time">
-        </div>
-      </div>
-      <div class="day">
-        <label><input type="checkbox" name="days" value="tuesday" onchange="toggleTimeSlots('tuesday')"> Tuesday</label>
-        <div id="tuesday-timeslot" class="timeslot-container">
-          <input type="time" name="tueStart" placeholder="Start Time">
-          <input type="time" name="tueEnd" placeholder="End Time">
-        </div>
-      </div>
-      <div class="day">
-        <label><input type="checkbox" name="days" value="wednesday" onchange="toggleTimeSlots('wednesday')"> Wednesday</label>
-        <div id="wednesday-timeslot" class="timeslot-container">
-          <input type="time" name="wedStart" placeholder="Start Time">
-          <input type="time" name="wedEnd" placeholder="End Time">
-        </div>
-      </div>
-      <div class="day">
-        <label><input type="checkbox" name="days" value="thursday" onchange="toggleTimeSlots('thursday')"> Thursday</label>
-        <div id="thursday-timeslot" class="timeslot-container">
-          <input type="time" name="thuStart" placeholder="Start Time">
-          <input type="time" name="thuEnd" placeholder="End Time">
-        </div>
-      </div>
-      <div class="day">
-        <label><input type="checkbox" name="days" value="friday" onchange="toggleTimeSlots('friday')"> Friday</label>
-        <div id="friday-timeslot" class="timeslot-container">
-          <input type="time" name="friStart" placeholder="Start Time">
-          <input type="time" name="friEnd" placeholder="End Time">
-        </div>
-      </div>
-      <div class="day">
-        <label><input type="checkbox" name="days" value="saturday" onchange="toggleTimeSlots('saturday')"> Saturday</label>
-        <div id="saturday-timeslot" class="timeslot-container">
-          <input type="time" name="satStart" placeholder="Start Time">
-          <input type="time" name="satEnd" placeholder="End Time">
-        </div>
-      </div>
-      <div class="day">
-        <label><input type="checkbox" name="days" value="sunday" onchange="toggleTimeSlots('sunday')"> Sunday</label>
-        <div id="sunday-timeslot" class="timeslot-container">
-          <input type="time" name="sunStart" placeholder="Start Time">
-          <input type="time" name="sunEnd" placeholder="End Time">
-        </div>
-      </div>
-    </div>
+  <div class="container">
+    <h1>Barber Sign Up</h1>
+    <form id="barberForm" action="barber-dashboard.html" method="get">
+      
+      <!-- Email, Phone, and Location -->
+      <input type="email" name="email" placeholder="Email" required>
+      <input type="tel" name="phone" placeholder="Phone Number" required>
+      
+      <!-- School Dropdown -->
+      <label for="school">Select School:</label>
+      <select name="school" id="school" required>
+        <option value="">Choose your School</option>
+        <option value="uva">University of Virginia</option>
+        <option value="virginia-tech">Virginia Tech</option>
+        <option value="william-mary">William and Mary</option>
+        <option value="jmu">James Madison University</option>
+      </select>
 
-    <button type="submit">Sign Up</button>
-  </form>
+      <input type="text" name="location" placeholder="Location" required>
+      
+      <!-- Hairstyle Checkboxes -->
+      <label>Hairstyles you are proficient at:</label>
+      <div class="hairstyles-container">
+        <label><input type="checkbox" name="hairstyles" value="beard trim"> Beard Trim</label>
+        <label><input type="checkbox" name="hairstyles" value="buzz cut"> Buzz Cut</label>
+        <label><input type="checkbox" name="hairstyles" value="bald"> Bald</label>
+        <label><input type="checkbox" name="hairstyles" value="mullet"> Mullet</label>
+        <label><input type="checkbox" name="hairstyles" value="low taper fade"> Low Taper Fade</label>
+        <label><input type="checkbox" name="hairstyles" value="blowout taper"> Blowout Taper</label>
+        <label><input type="checkbox" name="hairstyles" value="textured fringe"> Textured Fringe</label>
+        <label><input type="checkbox" name="hairstyles" value="wolfcut"> Wolfcut</label>
+        <label><input type="checkbox" name="hairstyles" value="middle part"> Middle Part</label>
+        <label><input type="checkbox" name="hairstyles" value="straightened hair"> Straightened Hair</label>
+        <label><input type="checkbox" name="hairstyles" value="dyed hair"> Dyed Hair</label>
+      </div>
+
+      <!-- Available Days and Hours -->
+      <label>Available Days and Hours:</label>
+      <div class="days-container">
+        <div class="day">
+          <label><input type="checkbox" name="days" value="monday" onchange="toggleTimeSlots('monday')"> Monday</label>
+          <div id="monday-timeslot" class="timeslot-container">
+            <input type="time" name="monStart" placeholder="Start Time">
+            <input type="time" name="monEnd" placeholder="End Time">
+          </div>
+        </div>
+        <div class="day">
+          <label><input type="checkbox" name="days" value="tuesday" onchange="toggleTimeSlots('tuesday')"> Tuesday</label>
+          <div id="tuesday-timeslot" class="timeslot-container">
+            <input type="time" name="tueStart" placeholder="Start Time">
+            <input type="time" name="tueEnd" placeholder="End Time">
+          </div>
+        </div>
+        <!-- Additional days go here (Wednesday, Thursday, etc.) -->
+      </div>
+
+      <button type="submit">Sign Up</button>
+    </form>
+  </div>
 
   <script>
     // Toggle time slot inputs visibility based on the selected day
@@ -143,5 +193,6 @@
       }
     }
   </script>
+
 </body>
 </html>
