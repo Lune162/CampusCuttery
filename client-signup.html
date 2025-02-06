@@ -11,11 +11,16 @@
       color: #333;
       text-align: center;
       margin: 0;
-      padding: 20px;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
     form {
       max-width: 500px;
       margin: 0 auto;
+      width: 100%;
     }
     input, select, button {
       display: block;
@@ -23,52 +28,76 @@
       padding: 10px;
       margin: 10px 0;
       font-size: 16px;
+      box-sizing: border-box; /* Ensures padding doesn't affect width */
     }
     button {
       background: #ffcc00;
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      font-size: 14px; /* Smaller font size for the button */
+      padding: 10px 20px; /* Adjusted padding for a smaller button */
     }
     button:hover {
       background: #ff9900;
+    }
+    select {
+      -webkit-appearance: none;  /* Remove default dropdown styling in webkit browsers */
+      -moz-appearance: none;     /* Remove default dropdown styling in Firefox */
+      appearance: none;          /* Remove default dropdown styling */
+      background: #fff url('https://upload.wikimedia.org/wikipedia/commons/a/a5/Down_triangle.svg') no-repeat right center;
+      background-size: 16px;
+      padding-right: 35px;       /* Add space for the arrow */
+    }
+    .contact {
+      margin-top: 30px;
+    }
+    .contact a {
+      color: #ff3366;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .contact a:hover {
+      text-decoration: underline;
     }
   </style>
   <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
-  <h1>Client Sign Up</h1>
-  <form id="clientForm" action="appointment.html" method="get">
-    <input type="email" id="clientEmail" name="email" placeholder="Email" required>
-    <input type="tel" id="clientPhone" name="phone" placeholder="Phone Number" required>
-    <input type="text" id="clientAddress" name="address" placeholder="Nearest Address (Dorm/College)" required>
-    <select name="hairstyle" id="hairstyle" required onchange="toggleOther(this.value)">
-      <option value="">Select a Hairstyle</option>
-      <option value="beard trim">Beard Trim</option>
-      <option value="buzz cut">Buzz Cut</option>
-      <option value="bald">Bald</option>
-      <option value="mullet">Mullet</option>
-      <option value="low taper fade">Low Taper Fade</option>
-      <option value="blowout taper">Blowout Taper</option>
-      <option value="textured fringe">Textured Fringe</option>
-      <option value="wolfcut">Wolfcut</option>
-      <option value="middle part">Middle Part</option>
-      <option value="straightened hair">Straightened Hair</option>
-      <option value="dyed hair">Dyed Hair</option>
-      <option value="other">Other</option>
-    </select>
-    <input type="text" id="otherHairstyle" name="otherHairstyle" placeholder="Specify Hairstyle" style="display:none;">
-    <button type="submit">Submit Appointment Request</button>
-  </form>
+  <div class="container">
+    <h1>Client Sign Up</h1>
+    <form id="clientForm" action="appointment.html" method="get">
+      <input type="email" id="clientEmail" name="email" placeholder="Email" required>
+      <input type="tel" id="clientPhone" name="phone" placeholder="Phone Number" required>
+      <input type="text" id="clientAddress" name="address" placeholder="Nearest Address (Dorm/College)" required>
+      <select name="hairstyle" id="hairstyle" required onchange="toggleOther(this.value)">
+        <option value="">Select a Hairstyle</option>
+        <option value="beard trim">Beard Trim</option>
+        <option value="buzz cut">Buzz Cut</option>
+        <option value="bald">Bald</option>
+        <option value="mullet">Mullet</option>
+        <option value="low taper fade">Low Taper Fade</option>
+        <option value="blowout taper">Blowout Taper</option>
+        <option value="textured fringe">Textured Fringe</option>
+        <option value="wolfcut">Wolfcut</option>
+        <option value="middle part">Middle Part</option>
+        <option value="straightened hair">Straightened Hair</option>
+        <option value="dyed hair">Dyed Hair</option>
+        <option value="other">Other</option>
+      </select>
+      <input type="text" id="otherHairstyle" name="otherHairstyle" placeholder="Specify Hairstyle" style="display:none;">
+      <button type="submit">Submit Appointment Request</button>
+    </form>
 
-  <!-- Stripe Payment Form -->
-  <h2>Secure Payment</h2>
-  <form id="payment-form">
-    <input type="text" id="name" placeholder="Full Name" required>
-    <div id="card-element"><!-- Stripe Card Input --></div>
-    <button id="submit-payment">Pay Now</button>
-    <div id="payment-message"></div>
-  </form>
+    <!-- Stripe Payment Form -->
+    <h2>Secure Payment</h2>
+    <form id="payment-form">
+      <input type="text" id="name" placeholder="Full Name" required>
+      <div id="card-element"><!-- Stripe Card Input --></div>
+      <button id="submit-payment">Pay Now</button>
+      <div id="payment-message"></div>
+    </form>
+  </div>
 
   <script>
     function toggleOther(val) {
