@@ -115,6 +115,26 @@
   </div>
 
   <script>
+    // Sample barber data to be stored in localStorage
+    const barbersBySchool = {
+        "uva": [
+            { name: "John Doe", location: "Room A", days: ["Monday", "Wednesday"], timeslots: ["9:00-11:00", "1:00-3:00"] },
+            { name: "Jane Smith", location: "Room B", days: ["Tuesday", "Thursday"], timeslots: ["10:00-12:00", "2:00-4:00"] }
+        ],
+        "virginia-tech": [
+            { name: "Tom Brown", location: "Room C", days: ["Monday", "Friday"], timeslots: ["10:00-12:00", "3:00-5:00"] }
+        ],
+        "william-mary": [
+            { name: "Sara White", location: "Room D", days: ["Wednesday", "Friday"], timeslots: ["9:00-11:00", "1:00-3:00"] }
+        ],
+        "jmu": [
+            { name: "David Green", location: "Room E", days: ["Tuesday", "Thursday"], timeslots: ["11:00-1:00", "2:00-4:00"] }
+        ]
+    };
+
+    // Store barber data in localStorage
+    localStorage.setItem('barbersBySchool', JSON.stringify(barbersBySchool));
+
     let selectedBarber = null;
 
     function displayBarbers() {
@@ -156,6 +176,12 @@
         button.classList.add("selected");
         selectedBarber = barber;
         document.getElementById("submitAppointment").style.display = "block";
+    }
+
+    function submitAppointment() {
+        if (selectedBarber) {
+            alert(`Appointment with ${selectedBarber.name} has been scheduled!`);
+        }
     }
   </script>
 </body>
