@@ -119,7 +119,6 @@
 
     function displayBarbers() {
         const school = document.getElementById("clientSchool").value;
-        const hairstyle = document.getElementById("hairstyle").value;
         const barberList = document.getElementById("barberList");
         barberList.innerHTML = "";
 
@@ -127,12 +126,8 @@
             const barbersBySchool = JSON.parse(localStorage.getItem('barbersBySchool')) || {};
             const barbers = barbersBySchool[school] || [];
 
-            let filteredBarbers = barbers.filter(barber => {
-                return !hairstyle || (Array.isArray(barber.hairstyles) && barber.hairstyles.includes(hairstyle));
-            });
-
-            if (filteredBarbers.length > 0) {
-                filteredBarbers.forEach(barber => {
+            if (barbers.length > 0) {
+                barbers.forEach(barber => {
                     const button = document.createElement("button");
                     button.classList.add("barber-button");
                     button.innerHTML = `
@@ -145,7 +140,7 @@
                     barberList.appendChild(button);
                 });
             } else {
-                barberList.innerHTML = "<p>No barbers available for this selection.</p>";
+                barberList.innerHTML = "<p>No barbers available for this school.</p>";
             }
         }
     }
@@ -161,29 +156,6 @@
         button.classList.add("selected");
         selectedBarber = barber;
         document.getElementById("submitAppointment").style.display = "block";
-    }
-
-    function submitAppointment() {
-        if (!selectedBarber) {
-            alert("Please select a barber before submitting your appointment.");
-            return;
-        }
-
-        const clientData = {
-            email: document.getElementById("clientEmail").value,
-            phone: document.getElementById("clientPhone").value,
-            hairstyle: document.getElementById("hairstyle").value,
-            barberEmail: selectedBarber.email,
-            barberName: selectedBarber.name,
-            timeSlots: selectedBarber.timeslots
-        };
-
-        const clientRequests = JSON.parse(localStorage.getItem("clientRequests")) || [];
-        clientRequests.push(clientData);
-        localStorage.setItem("clientRequests", JSON.stringify(clientRequests));
-
-        alert(`Appointment request sent to ${selectedBarber.name}!`);
-        window.location.href = "appointment.html";
     }
   </script>
 </body>
