@@ -8,8 +8,24 @@
 </head>
 <body>
     <h2>Set Your Availability</h2>
-    <input type="date" id="availableDate">
-    <input type="time" id="availableTime">
+    
+    <label for="availableDay">Select Day:</label>
+    <select id="availableDay">
+        <option value="Monday">Monday</option>
+        <option value="Tuesday">Tuesday</option>
+        <option value="Wednesday">Wednesday</option>
+        <option value="Thursday">Thursday</option>
+        <option value="Friday">Friday</option>
+        <option value="Saturday">Saturday</option>
+        <option value="Sunday">Sunday</option>
+    </select>
+
+    <label for="startTime">From:</label>
+    <input type="time" id="startTime">
+
+    <label for="endTime">To:</label>
+    <input type="time" id="endTime">
+
     <button onclick="setAvailability()">Save</button>
 
     <h3>Your Availability:</h3>
