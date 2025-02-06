@@ -225,9 +225,12 @@
       barbersBySchool[barberData.school].push(barberData);
       localStorage.setItem('barbersBySchool', JSON.stringify(barbersBySchool));
 
+      // Store barber data as 'logged in'
+      localStorage.setItem('loggedInBarber', JSON.stringify(barberData));
+
       alert('Barber signed up successfully!');
-      // Optionally, redirect to a barber list page
-      // window.location.href = 'barber-list.html';
+      // Redirect to barber dashboard
+      window.location.href = 'barber-dashboard.html';  // Barber dashboard page
     }
   </script>
 

@@ -52,16 +52,24 @@
   </div>
 
   <script>
+    // On document load, check if a barber is logged in and show their requests
     document.addEventListener("DOMContentLoaded", function() {
-      const barber = JSON.parse(localStorage.getItem("selectedBarber"));
+      // Retrieve the barber data from localStorage (this should be saved during login)
+      const barber = JSON.parse(localStorage.getItem("loggedInBarber")); 
+      
+      // Retrieve all client requests from localStorage
       const clientRequests = JSON.parse(localStorage.getItem("clientRequests")) || [];
 
+      // Get the div to display requests
       const clientRequestsDiv = document.getElementById("clientRequests");
       clientRequestsDiv.innerHTML = ""; // Clear existing requests
 
+      // If the barber is logged in, filter the requests for that barber
       if (barber) {
+        // Filter the client requests for this barber's email
         const barberRequests = clientRequests.filter(request => request.barberEmail === barber.email);
 
+        // If there are barber-specific requests, display them
         if (barberRequests.length > 0) {
           barberRequests.forEach(request => {
             const div = document.createElement("div");
@@ -80,20 +88,24 @@
           clientRequestsDiv.innerHTML = "<p>No appointment requests.</p>";
         }
       } else {
-        clientRequestsDiv.innerHTML = "<p>No barber selected or logged in.</p>";
+        clientRequestsDiv.innerHTML = "<p>No barber logged in. Please sign up or log in.</p>";
       }
     });
 
-    // Function to accept an appointment
+    // Function to handle accepting a request
     function acceptRequest(clientEmail) {
       alert(`Appointment accepted for ${clientEmail}.`);
-      // Logic for accepting request, e.g., updating the request status or notifying the client
+
+      // Logic for accepting request could be implemented here
+      // For instance, you could update the request status in localStorage
     }
 
-    // Function to reject an appointment
+    // Function to handle rejecting a request
     function rejectRequest(clientEmail) {
       alert(`Appointment rejected for ${clientEmail}.`);
-      // Logic for rejecting request, e.g., removing from the list or notifying the client
+
+      // Logic for rejecting request could be implemented here
+      // For example, remove the request from the list or mark it as rejected
     }
   </script>
 
