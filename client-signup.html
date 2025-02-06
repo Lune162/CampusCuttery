@@ -18,14 +18,14 @@
       height: 100vh;
     }
     .container {
-      max-width: 500px;
       width: 100%;
+      max-width: 600px; /* Set a max width for the form */
       padding: 20px;
       box-sizing: border-box;
     }
     form {
-      margin: 0 auto;
       width: 100%;
+      margin: 0 auto;
     }
     input, select, button {
       display: block;
@@ -33,9 +33,10 @@
       margin: 10px 0;
       font-size: 16px;
       box-sizing: border-box; /* Ensures padding doesn't affect width */
+      width: 100%; /* Make the inputs and select take the full width */
     }
     input, select {
-      width: 160%; /* Make the text fields and dropdown 1.6 times wider than the buttons */
+      width: 100%; /* Make the text fields and dropdown 100% wide */
     }
     button {
       background: #ffcc00;
