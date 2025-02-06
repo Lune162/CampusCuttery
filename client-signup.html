@@ -156,13 +156,18 @@
       const barberList = document.getElementById("barberList");
       barberList.innerHTML = ""; // Clear existing barbers list
 
-      if (school && hairstyle) {
+      if (school) {
         const barbersBySchool = JSON.parse(localStorage.getItem('barbersBySchool')) || {};
         const barbers = barbersBySchool[school] || [];
 
-        // Filter barbers by selected hairstyle
-        const filteredBarbers = barbers.filter(barber => barber.hairstyles.includes(hairstyle));
+        let filteredBarbers = barbers;
 
+        // If a hairstyle is selected, filter barbers by hairstyle
+        if (hairstyle) {
+          filteredBarbers = barbers.filter(barber => barber.hairstyles.includes(hairstyle));
+        }
+
+        // Display barbers
         if (filteredBarbers.length > 0) {
           filteredBarbers.forEach(barber => {
             const button = document.createElement("button");
