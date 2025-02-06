@@ -139,7 +139,48 @@
           <input type="time" name="monEnd" placeholder="End Time">
         </div>
       </div>
-      <!-- Similar input fields for other days -->
+      <div class="day">
+        <label><input type="checkbox" name="days" value="tuesday" onchange="toggleTimeSlots('tuesday')"> Tuesday</label>
+        <div id="tuesday-timeslot" class="timeslot-container">
+          <input type="time" name="tueStart" placeholder="Start Time">
+          <input type="time" name="tueEnd" placeholder="End Time">
+        </div>
+      </div>
+      <div class="day">
+        <label><input type="checkbox" name="days" value="wednesday" onchange="toggleTimeSlots('wednesday')"> Wednesday</label>
+        <div id="wednesday-timeslot" class="timeslot-container">
+          <input type="time" name="wedStart" placeholder="Start Time">
+          <input type="time" name="wedEnd" placeholder="End Time">
+        </div>
+      </div>
+      <div class="day">
+        <label><input type="checkbox" name="days" value="thursday" onchange="toggleTimeSlots('thursday')"> Thursday</label>
+        <div id="thursday-timeslot" class="timeslot-container">
+          <input type="time" name="thuStart" placeholder="Start Time">
+          <input type="time" name="thuEnd" placeholder="End Time">
+        </div>
+      </div>
+      <div class="day">
+        <label><input type="checkbox" name="days" value="friday" onchange="toggleTimeSlots('friday')"> Friday</label>
+        <div id="friday-timeslot" class="timeslot-container">
+          <input type="time" name="friStart" placeholder="Start Time">
+          <input type="time" name="friEnd" placeholder="End Time">
+        </div>
+      </div>
+      <div class="day">
+        <label><input type="checkbox" name="days" value="saturday" onchange="toggleTimeSlots('saturday')"> Saturday</label>
+        <div id="saturday-timeslot" class="timeslot-container">
+          <input type="time" name="satStart" placeholder="Start Time">
+          <input type="time" name="satEnd" placeholder="End Time">
+        </div>
+      </div>
+      <div class="day">
+        <label><input type="checkbox" name="days" value="sunday" onchange="toggleTimeSlots('sunday')"> Sunday</label>
+        <div id="sunday-timeslot" class="timeslot-container">
+          <input type="time" name="sunStart" placeholder="Start Time">
+          <input type="time" name="sunEnd" placeholder="End Time">
+        </div>
+      </div>
     </div>
 
     <button type="submit">Sign Up</button>
