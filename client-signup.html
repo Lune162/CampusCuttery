@@ -24,11 +24,13 @@
     }
     input, select, button {
       display: block;
-      width: 100%;
       padding: 10px;
       margin: 10px 0;
       font-size: 16px;
       box-sizing: border-box; /* Ensures padding doesn't affect width */
+    }
+    input, select {
+      width: 160%; /* Make the text fields and dropdown 1.6 times wider than the buttons */
     }
     button {
       background: #ffcc00;
@@ -37,6 +39,7 @@
       cursor: pointer;
       font-size: 14px; /* Smaller font size for the button */
       padding: 10px 20px; /* Adjusted padding for a smaller button */
+      width: 100%; /* Ensure button width remains consistent */
     }
     button:hover {
       background: #ff9900;
