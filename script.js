@@ -5,18 +5,15 @@ document.addEventListener("DOMContentLoaded", function () {
     // Handle Client Form Submission
     if (clientForm) {
         clientForm.addEventListener("submit", function (e) {
-            e.preventDefault(); // Prevent the default form submission
+            e.preventDefault(); // Prevent default form submission
             const clientData = {
                 email: document.getElementById("clientEmail").value,
                 phone: document.getElementById("clientPhone").value,
-                address: document.getElementById("clientAddress").value,
-                hairstyle: document.getElementById("clientHairstyle").value
+                hairstyle: document.getElementById("hairstyle").value
             };
 
-            // Save client data to localStorage
             localStorage.setItem("clientData", JSON.stringify(clientData));
 
-            // Get selected barber info (if selected)
             const selectedBarber = JSON.parse(localStorage.getItem("selectedBarber"));
             if (selectedBarber) {
                 const appointmentRequest = {
@@ -24,101 +21,101 @@ document.addEventListener("DOMContentLoaded", function () {
                     clientPhone: clientData.phone,
                     hairstyle: clientData.hairstyle,
                     barberEmail: selectedBarber.email,
-                    time: "Selected Time Here" // Placeholder for time
+                    time: "Selected Time Here" // Placeholder
                 };
 
-                // Store appointment request in localStorage
                 const clientRequests = JSON.parse(localStorage.getItem("clientRequests")) || [];
                 clientRequests.push(appointmentRequest);
                 localStorage.setItem("clientRequests", JSON.stringify(clientRequests));
 
                 alert("Appointment request sent to barber!");
             }
-
             alert("Client registered successfully!");
-            // Optionally, redirect after successful form submission (uncomment below line to enable redirection)
-            // window.location.href = "appointment.html";
         });
     }
 
-    // Handle Barber Form Submission
+    // Handle Barber Form Submission (Now Stores Multiple Barbers)
     if (barberForm) {
         barberForm.addEventListener("submit", function (e) {
-            e.preventDefault(); // Prevent the default form submission
+            e.preventDefault();
+
             const barberData = {
+                name: document.getElementById("barberName").value,
                 email: document.getElementById("barberEmail").value,
                 phone: document.getElementById("barberPhone").value,
-                location: document.getElementById("barberLocation").value,
-                styles: Array.from(document.getElementById("barberStyles").selectedOptions).map(opt => opt.value),
-                availability: document.getElementById("barberAvailability").value
+                location: document.getElementById("location").value,
+                school: document.getElementById("school").value,
+                hairstyles: Array.from(document.getElementsByClassName("hairstyle-button"))
+                    .filter(button => button.classList.contains("selected"))
+                    .map(button => button.innerText),
+                days: Array.from(document.querySelectorAll('input[name="days"]:checked')).map(day => day.value),
+                timeslots: Array.from(document.querySelectorAll('.timeslot-container input'))
+                    .map(input => input.value).filter(time => time)
             };
 
-            // Save barber data to localStorage
-            localStorage.setItem("barberData", JSON.stringify(barberData));
+            let barbersBySchool = JSON.parse(localStorage.getItem("barbersBySchool")) || {};
+
+            if (!barbersBySchool[barberData.school]) {
+                barbersBySchool[barberData.school] = [];
+            }
+
+            barbersBySchool[barberData.school].push(barberData);
+            localStorage.setItem("barbersBySchool", JSON.stringify(barbersBySchool));
 
             alert("Barber registered successfully!");
-
-            // Optionally, redirect after successful form submission (uncomment below line to enable redirection)
-            // window.location.href = "barber-dashboard.html";
+            window.location.href = "barber-dashboard.html";
         });
+    }
+
+    // Handle Displaying Barbers for Clients
+    if (document.getElementById("clientSchool")) {
+        document.getElementById("clientSchool").addEventListener("change", displayBarbers);
     }
 });
 
-// Handle Barber Selection
-function selectBarber(barber) {
-    // Save selected barber info in localStorage
-    localStorage.setItem("selectedBarber", JSON.stringify(barber));
+// Function to Display Barbers When Client Selects a School
+function displayBarbers() {
+    const school = document.getElementById("clientSchool").value;
+    const barberList = document.getElementById("barberList");
+    barberList.innerHTML = "";
 
-    // Alert the user that the barber has been selected
-    alert(`You selected ${barber.email} for your appointment.`);
-}
+    if (!school) return;
 
-// Handle Stripe Payment
-function processPayment(paymentMethodId) {
-    fetch("/process-payment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ paymentMethodId })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert("Payment successful!");
-        } else {
-            alert("Payment failed. Please try again.");
-        }
-    }).catch(error => {
-        alert("Error processing payment. Please try again.");
+    let barbersBySchool = JSON.parse(localStorage.getItem("barbersBySchool")) || {};
+    let barbers = barbersBySchool[school] || [];
+
+    console.log("Barbers for", school, barbers); // Debugging
+
+    if (barbers.length === 0) {
+        barberList.innerHTML = "<p>No barbers available for this school.</p>";
+        return;
+    }
+
+    barbers.forEach(barber => {
+        const button = document.createElement("button");
+        button.classList.add("barber-button");
+        button.innerHTML = `
+            <strong>${barber.name}</strong><br>
+            <span>${barber.location}</span><br>
+            <span>Hairstyles: ${barber.hairstyles.length ? barber.hairstyles.join(", ") : "Not specified"}</span><br>
+            <span>Available Days: ${barber.days ? barber.days.join(", ") : "Not specified"}</span><br>
+            <span>Available Times: ${formatTimeSlots(barber.timeslots)}</span>
+        `;
+        button.onclick = () => selectBarber(barber, button);
+        barberList.appendChild(button);
     });
 }
 
-// Handle Stripe Elements (Card Input)
-document.addEventListener("DOMContentLoaded", async function () {
-    if (document.getElementById("payment-form")) {
-        const stripe = Stripe("YOUR_PUBLISHABLE_KEY"); // Replace with your Stripe public key
-        const elements = stripe.elements();
-        const card = elements.create("card");
+// Helper Function to Format Time Slots
+function formatTimeSlots(timeslots) {
+    return timeslots && timeslots.length ? timeslots.filter(time => time).join(", ") : "Not specified";
+}
 
-        // Mount the card element
-        card.mount("#card-element");
-
-        const form = document.getElementById("payment-form");
-
-        // Handle form submission
-        form.addEventListener("submit", async (event) => {
-            event.preventDefault(); // Prevent default form submission
-
-            const { paymentMethod, error } = await stripe.createPaymentMethod({
-                type: "card",
-                card: card,
-                billing_details: { name: document.getElementById("name").value }
-            });
-
-            if (error) {
-                alert(error.message); // Show error message if any
-            } else {
-                processPayment(paymentMethod.id); // Call process payment function
-            }
-        });
-    }
-});
+// Function to Select a Barber
+function selectBarber(barber, button) {
+    document.querySelectorAll(".barber-button").forEach(btn => btn.classList.remove("selected"));
+    button.classList.add("selected");
+    localStorage.setItem("selectedBarber", JSON.stringify(barber));
+    document.getElementById("submitAppointment").style.display = "block";
+    alert(`You selected ${barber.name} for your appointment.`);
+}
