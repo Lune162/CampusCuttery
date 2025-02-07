@@ -5,13 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Campus Cuttery</title>
 
-  <!-- Firebase SDK -->
+  <!-- Firebase Modular SDK -->
   <script type="module">
+    // Import Firebase v9+ SDK Modules
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
     import { getAuth } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
     import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-    // Firebase Config
+    // Your Firebase config (replace with your own Firebase config values)
     const firebaseConfig = {
       apiKey: "AIzaSyB9TYVDPd5yiEMgeyzYZuW04qXAlMD-C4k",
       authDomain: "campus-cuttery.firebaseapp.com",
@@ -22,15 +23,24 @@
       measurementId: "G-91K4SBTWQX"
     };
 
+    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
+
+    // Initialize Firebase services
     const auth = getAuth(app);
     const db = getFirestore(app);
+
+    // Log the auth and db objects to ensure they are initialized correctly
+    console.log("Firebase Auth:", auth);
+    console.log("Firestore DB:", db);
+
   </script>
 
   <style>
+    /* Your styles here */
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fad0c4);
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
       color: #333;
       margin: 0;
       padding: 0;
@@ -100,6 +110,7 @@
       text-decoration: underline;
     }
   </style>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="container">
