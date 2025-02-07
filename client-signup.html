@@ -115,7 +115,7 @@
         <input type="email" id="clientEmail" name="email" placeholder="Email" required>
         <input type="tel" id="clientPhone" name="phone" placeholder="Phone Number" required>
         
-        <select name="school" id="clientSchool">
+        <select name="school" id="clientSchool" required>
           <option value="">Select School</option>
           <option value="uva">University of Virginia</option>
           <option value="virginia-tech">Virginia Tech</option>
@@ -149,7 +149,7 @@
   <script>
     let selectedBarber = null;
 
-    // Function to display all barbers when the page loads
+    // Function to display all barbers
     function displayBarbers() {
       const barberList = document.getElementById("barberList");
       barberList.innerHTML = "";
