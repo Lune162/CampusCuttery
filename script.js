@@ -1,18 +1,25 @@
-// Initialize Firebase
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyB9TYVDPd5yiEMgeyzYZuW04qXAlMD-C4k",
-  authDomain: "campus-cuttery.firebaseapp.com",
-  projectId: "campus-cuttery",
-  storageBucket: "campus-cuttery.firebasestorage.app",
-  messagingSenderId: "505873129716",
-  appId: "1:505873129716:web:5b2f41d92058137f0dbea1",
-  measurementId: "G-91K4SBTWQX"
-};
-firebase.initializeApp(firebaseConfig);
+<!-- Your HTML code -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-const auth = firebase.auth();
-const db = firebase.firestore();
+  // Initialize Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyB9TYVDPd5yiEMgeyzYZuW04qXAlMD-C4k",
+    authDomain: "campus-cuttery.firebaseapp.com",
+    projectId: "campus-cuttery",
+    storageBucket: "campus-cuttery.firebasestorage.app",
+    messagingSenderId: "505873129716",
+    appId: "1:505873129716:web:5b2f41d92058137f0dbea1",
+    measurementId: "G-91K4SBTWQX"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+</script>
+
 
 // Handle Client Sign-Up
 document.addEventListener("DOMContentLoaded", function () {
