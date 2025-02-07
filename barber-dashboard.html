@@ -4,18 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Barber Dashboard - Campus Cuttery</title>
-  <script src="https://cdn.emailjs.com/dist/email.min.js"></script> 
   <style>
-    :root {
-      --primary-color: #ff9a9e;
-      --secondary-color: #fad0c4;
-      --text-color: #333;
-    }
-
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-      color: var(--text-color);
+      background: var(--theme-bg, linear-gradient(135deg, #ff9a9e, #fad0c4));
+      color: #333;
       margin: 0;
       padding: 0;
       display: flex;
@@ -36,27 +29,15 @@
       animation: fadeIn 0.5s ease-in-out;
     }
 
-    h1 {
-      font-size: 2.5em;
-      color: var(--primary-color);
-    }
-
-    .client-requests-container {
-      margin-top: 20px;
-      text-align: left;
-    }
-
+    h1 { font-size: 2.5em; color: #ff3366; }
+    .client-requests-container, .confirmed-appointments-container { margin-top: 20px; text-align: left; }
+    
     .client-item {
       background: #f9f9f9;
       padding: 15px;
       margin: 10px 0;
       border-radius: 8px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      transition: transform 0.2s ease-in-out;
-    }
-
-    .client-item:hover {
-      transform: scale(1.02);
     }
 
     .btn {
@@ -66,25 +47,11 @@
       border-radius: 5px;
       cursor: pointer;
       font-weight: bold;
-      transition: all 0.3s ease;
     }
+    .btn.accept { background-color: #4CAF50; color: white; }
+    .btn.reject { background-color: #f44336; color: white; }
 
-    .btn.accept {
-      background-color: #4CAF50;
-      color: white;
-    }
-
-    .btn.reject {
-      background-color: #f44336;
-      color: white;
-    }
-
-    .no-requests {
-      font-size: 1.1em;
-      color: #777;
-      font-style: italic;
-      margin-top: 20px;
-    }
+    .theme-picker { margin-top: 20px; }
   </style>
 </head>
 <body>
@@ -92,94 +59,137 @@
   <div class="container">
     <h1>Barber Dashboard</h1>
     <p class="welcome-message" id="welcomeMessage">Welcome, Barber!</p>
+
     <h2>Your Appointment Requests</h2>
     <div id="clientRequests" class="client-requests-container"></div>
+
+    <h2>Confirmed Appointments</h2>
+    <div id="confirmedAppointments" class="confirmed-appointments-container"></div>
+
+    <div class="theme-picker">
+      <h3>Change Theme</h3>
+      <select id="themeSelector">
+        <option value="light">Light Theme</option>
+        <option value="dark">Dark Theme</option>
+        <option value="gradient">Gradient Theme</option>
+      </select>
+    </div>
   </div>
 
   <script>
-    emailjs.init("YOUR_USER_ID"); // Replace with your EmailJS user ID
-
     document.addEventListener("DOMContentLoaded", function() {
       const barber = JSON.parse(localStorage.getItem("loggedInBarber")); 
-      const clientRequests = JSON.parse(localStorage.getItem("appointmentRequests")) || [];  
-      const clientRequestsDiv = document.getElementById("clientRequests");
+      const clientRequests = JSON.parse(localStorage.getItem("appointmentRequests")) || [];
+      const confirmedAppointments = JSON.parse(localStorage.getItem("confirmedAppointments")) || [];
 
-      clientRequestsDiv.innerHTML = ""; 
+      const welcomeMessage = document.getElementById("welcomeMessage");
+      const clientRequestsDiv = document.getElementById("clientRequests");
+      const confirmedAppointmentsDiv = document.getElementById("confirmedAppointments");
 
       if (barber) {
-        document.getElementById("welcomeMessage").textContent = `Welcome, ${barber.name}!`;
+        welcomeMessage.textContent = `Welcome, ${barber.name}!`;
 
-        // Filter requests for the logged-in barber
+        // Display Pending Requests
         const barberRequests = clientRequests.filter(request => request.barberEmail === barber.email);
+        clientRequestsDiv.innerHTML = barberRequests.length > 0 ? "" : `<p>No pending requests.</p>`;
+        
+        barberRequests.forEach((request, index) => {
+          const div = document.createElement("div");
+          div.classList.add("client-item");
+          div.innerHTML = `
+            <p><strong>Client:</strong> ${request.clientEmail}</p>
+            <p><strong>Phone:</strong> ${request.clientPhone}</p>
+            <p><strong>Hairstyle:</strong> ${request.clientHairstyle}</p>
+            <p><strong>Date:</strong> ${request.date}</p>
+            <p><strong>Time Slot:</strong> ${request.time}</p>
+            <button class="btn accept" onclick="acceptRequest(${index})">Accept</button>
+            <button class="btn reject" onclick="rejectRequest(${index})">Reject</button>
+          `;
+          clientRequestsDiv.appendChild(div);
+        });
 
-        if (barberRequests.length > 0) {
-          barberRequests.forEach((request, index) => {
-            const div = document.createElement("div");
-            div.classList.add("client-item");
-            div.innerHTML = `
-              <p><strong>Client:</strong> ${request.clientName}</p>
-              <p><strong>Email:</strong> ${request.clientEmail}</p>
-              <p><strong>Phone:</strong> ${request.clientPhone}</p>
-              <p><strong>Hairstyle:</strong> ${request.hairstyle || "Not specified"}</p>
-              <p><strong>Date:</strong> ${request.appointmentDate}</p>
-              <p><strong>Time:</strong> ${request.appointmentTime}</p>
-              <button class="btn accept" onclick="handleAppointment(${index}, 'accepted')">Accept</button>
-              <button class="btn reject" onclick="handleAppointment(${index}, 'rejected')">Reject</button>
-            `;
-            clientRequestsDiv.appendChild(div);
-          });
-        } else {
-          clientRequestsDiv.innerHTML = `<p class="no-requests">No appointment requests at the moment.</p>`;
-        }
-      } else {
-        clientRequestsDiv.innerHTML = `<p class="no-requests">No barber logged in. Please sign up or log in.</p>`;
+        // Display Confirmed Appointments
+        const barberAppointments = confirmedAppointments.filter(app => app.barberEmail === barber.email);
+        confirmedAppointmentsDiv.innerHTML = barberAppointments.length > 0 ? "" : `<p>No confirmed appointments.</p>`;
+
+        barberAppointments.forEach(app => {
+          const div = document.createElement("div");
+          div.classList.add("client-item");
+          div.innerHTML = `
+            <p><strong>Client:</strong> ${app.clientEmail}</p>
+            <p><strong>Phone:</strong> ${app.clientPhone}</p>
+            <p><strong>Hairstyle:</strong> ${app.clientHairstyle}</p>
+            <p><strong>Date:</strong> ${app.date}</p>
+            <p><strong>Time Slot:</strong> ${app.time}</p>
+          `;
+          confirmedAppointmentsDiv.appendChild(div);
+        });
       }
     });
 
-    function handleAppointment(index, status) {
+    function acceptRequest(index) {
       let clientRequests = JSON.parse(localStorage.getItem("appointmentRequests")) || [];
+      let confirmedAppointments = JSON.parse(localStorage.getItem("confirmedAppointments")) || [];
       let request = clientRequests[index];
 
-      let clientSubject, clientMessage, barberSubject, barberMessage;
+      confirmedAppointments.push(request);
+      localStorage.setItem("confirmedAppointments", JSON.stringify(confirmedAppointments));
 
-      if (status === "accepted") {
-        clientSubject = "Appointment Confirmed ✅";
-        clientMessage = `Dear ${request.clientName},\n\nYour appointment with ${request.barberName} on ${request.appointmentDate} at ${request.appointmentTime} has been confirmed!\n\n- Campus Cuttery Team`;
-        
-        barberSubject = "New Appointment Scheduled 📅";
-        barberMessage = `Dear ${request.barberName},\n\nYou have a new appointment with ${request.clientName} on ${request.appointmentDate} at ${request.appointmentTime}.\n\n- Campus Cuttery Team`;
-      } else {
-        clientSubject = "Appointment Declined ❌";
-        clientMessage = `Dear ${request.clientName},\n\nUnfortunately, your appointment with ${request.barberName} on ${request.appointmentDate} at ${request.appointmentTime} was declined.\n\n- Campus Cuttery Team`;
+      sendEmail(request.clientEmail, `Your appointment with ${request.barberName} on ${request.date} at ${request.time} has been confirmed.`);
 
-        barberSubject = "Appointment Declined 🛑";
-        barberMessage = `Dear ${request.barberName},\n\nYou declined an appointment request from ${request.clientName} on ${request.appointmentDate} at ${request.appointmentTime}.\n\n- Campus Cuttery Team`;
-      }
-
-      sendEmail(request.clientEmail, clientSubject, clientMessage);
-      sendEmail(request.barberEmail, barberSubject, barberMessage);
-
-      // Remove from pending requests
       clientRequests.splice(index, 1);
       localStorage.setItem("appointmentRequests", JSON.stringify(clientRequests));
-
       location.reload();
     }
 
-    function sendEmail(to, subject, message) {
-      emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
-        to_email: to,
-        subject: subject,
-        message: message
-      }).then(
-        function(response) {
-          console.log("Email sent successfully:", response);
-        },
-        function(error) {
-          console.log("Email failed to send:", error);
-        }
-      );
+    function rejectRequest(index) {
+      let clientRequests = JSON.parse(localStorage.getItem("appointmentRequests")) || [];
+      let request = clientRequests[index];
+
+      sendEmail(request.clientEmail, `Your appointment with ${request.barberName} on ${request.date} at ${request.time} was rejected.`);
+
+      clientRequests.splice(index, 1);
+      localStorage.setItem("appointmentRequests", JSON.stringify(clientRequests));
+      location.reload();
     }
+
+    function sendEmail(to, message) {
+      emailjs.send("service_xxx", "template_xxx", {
+        to_email: to,
+        message: message
+      }).then(response => {
+        console.log("Email sent:", response);
+      }).catch(error => {
+        console.error("Email failed:", error);
+      });
+    }
+
+    document.getElementById("themeSelector").addEventListener("change", function() {
+      let theme = this.value;
+      localStorage.setItem("theme", theme);
+      applyTheme(theme);
+    });
+
+    function applyTheme(theme) {
+      if (theme === "light") {
+        document.body.style.setProperty("--theme-bg", "#ffffff");
+      } else if (theme === "dark") {
+        document.body.style.setProperty("--theme-bg", "#333333");
+      } else {
+        document.body.style.setProperty("--theme-bg", "linear-gradient(135deg, #ff9a9e, #fad0c4)");
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      let savedTheme = localStorage.getItem("theme") || "gradient";
+      document.getElementById("themeSelector").value = savedTheme;
+      applyTheme(savedTheme);
+    });
+  </script>
+
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <script>
+    emailjs.init("your_public_key");
   </script>
 
 </body>
