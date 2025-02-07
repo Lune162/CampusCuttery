@@ -149,14 +149,18 @@
   <script>
     let selectedBarber = null;
 
-    // Function to display all barbers
+    // Function to handle school and hairstyle selection
     function displayBarbers() {
       const barberList = document.getElementById("barberList");
       barberList.innerHTML = "";
 
       // Retrieve all barbers from localStorage
       const barbersBySchool = JSON.parse(localStorage.getItem('barbersBySchool')) || {};
-      const allBarbers = Object.values(barbersBySchool).flat(); // Flatten all barbers across schools
+      console.log('Barbers from LocalStorage:', barbersBySchool); // Debugging step
+
+      // Flatten all barbers across schools into one list
+      const allBarbers = Object.values(barbersBySchool).flat();
+      console.log('All barbers:', allBarbers); // Debugging step
 
       // If no barbers are found, display a message
       if (allBarbers.length === 0) {
