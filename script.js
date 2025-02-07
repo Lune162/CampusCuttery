@@ -1,11 +1,13 @@
 // Initialize Firebase
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyB9TYVDPd5yiEMgeyzYZuW04qXAlMD-C4k",
+  authDomain: "campus-cuttery.firebaseapp.com",
+  projectId: "campus-cuttery",
+  storageBucket: "campus-cuttery.firebasestorage.app",
+  messagingSenderId: "505873129716",
+  appId: "1:505873129716:web:5b2f41d92058137f0dbea1",
+  measurementId: "G-91K4SBTWQX"
 };
 firebase.initializeApp(firebaseConfig);
 
