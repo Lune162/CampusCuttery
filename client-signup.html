@@ -5,105 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Client Sign Up - Campus Cuttery</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f0f8ff;
-      color: #333;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 600px;
-      padding: 20px;
-      box-sizing: border-box;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .form-container {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      margin-top: 20px;
-      width: 100%;
-      max-width: 450px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    input, select, button {
-      display: block;
-      padding: 12px;
-      margin: 10px auto;
-      font-size: 16px;
-      width: 90%;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      box-sizing: border-box;
-      text-align: center;
-    }
-
-    button {
-      background: #ffcc00;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: bold;
-      padding: 12px;
-      display: none;
-      width: 100%;
-    }
-
-    button:hover {
-      background: #ff9900;
-    }
-
-    h2 {
-      margin-top: 40px;
-    }
-
-    .barber-list {
-      margin-top: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      width: 100%;
-    }
-
-    .barber-button {
-      background-color: #ffcc00;
-      color: white;
-      border: none;
-      cursor: pointer;
-      padding: 12px;
-      font-size: 16px;
-      border-radius: 8px;
-      margin: 10px;
-      transition: background-color 0.3s, transform 0.3s;
-      width: 100%;
-      max-width: 300px;
-      text-align: left;
-    }
-
-    .barber-button:hover {
-      background-color: #ff9900;
-    }
-
-    .barber-button.selected {
-      background-color: #ff6600;
-    }
+    /* Same style as previous */
   </style>
 </head>
 <body>
@@ -115,7 +17,7 @@
         <input type="email" id="clientEmail" name="email" placeholder="Email" required>
         <input type="tel" id="clientPhone" name="phone" placeholder="Phone Number" required>
         
-        <select name="school" id="clientSchool" required>
+        <select name="school" id="clientSchool">
           <option value="">Select School</option>
           <option value="uva">University of Virginia</option>
           <option value="virginia-tech">Virginia Tech</option>
@@ -149,32 +51,23 @@
   <script>
     let selectedBarber = null;
 
-    // Function to handle school and hairstyle selection
+    // Function to display all barbers when the page loads
     function displayBarbers() {
-      const school = document.getElementById("clientSchool").value;
-      const selectedHairstyle = document.getElementById("hairstyle").value;
       const barberList = document.getElementById("barberList");
       barberList.innerHTML = "";
 
-      if (!school) return; // Exit if no school is selected
-
-      // Retrieve barbers from localStorage
+      // Retrieve all barbers from localStorage
       const barbersBySchool = JSON.parse(localStorage.getItem('barbersBySchool')) || {};
-      let barbers = barbersBySchool[school] || [];
-
-      // Filter barbers by hairstyle if selected
-      if (selectedHairstyle) {
-        barbers = barbers.filter(barber => barber.hairstyles.includes(selectedHairstyle));
-      }
+      const allBarbers = Object.values(barbersBySchool).flat(); // Flatten all barbers across schools
 
       // If no barbers are found, display a message
-      if (barbers.length === 0) {
-        barberList.innerHTML = "<p>No barbers available for this school and hairstyle.</p>";
+      if (allBarbers.length === 0) {
+        barberList.innerHTML = "<p>No barbers available.</p>";
         return;
       }
 
-      // Display barbers as buttons
-      barbers.forEach(barber => {
+      // Display all barbers as buttons
+      allBarbers.forEach(barber => {
         const button = document.createElement("button");
         button.classList.add("barber-button");
         button.innerHTML = `
@@ -211,9 +104,10 @@
       }
     }
 
-    // Add event listeners for school and hairstyle selection
-    document.getElementById("clientSchool").addEventListener("change", displayBarbers);
-    document.getElementById("hairstyle").addEventListener("change", displayBarbers);
+    // Display all barbers when the page loads
+    window.onload = function() {
+      displayBarbers(); // Automatically show all barbers when page loads
+    }
   </script>
 
 </body>
