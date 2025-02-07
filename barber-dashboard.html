@@ -48,12 +48,13 @@
       margin-bottom: 15px;
     }
 
-    .client-requests-container {
+    .client-requests-container,
+    .accepted-appointments-container {
       margin-top: 20px;
       text-align: left;
     }
 
-    .client-item {
+    .client-item, .appointment-item {
       background: #fff;
       padding: 15px;
       margin: 10px 0;
@@ -62,11 +63,11 @@
       transition: transform 0.2s ease-in-out;
     }
 
-    .client-item:hover {
+    .client-item:hover, .appointment-item:hover {
       transform: scale(1.03);
     }
 
-    .client-item p {
+    .client-item p, .appointment-item p {
       margin: 8px 0;
       font-size: 1em;
       color: #333;
@@ -129,14 +130,19 @@
   <div class="container">
     <h1 id="dashboardTitle">Barber Dashboard</h1>
     <p class="welcome-message" id="welcomeMessage">Welcome, Barber!</p>
+    
     <h2>Your Appointment Requests</h2>
     <div id="clientRequests" class="client-requests-container"></div>
+
+    <h2>Accepted Appointments</h2>
+    <div id="acceptedAppointments" class="accepted-appointments-container"></div>
   </div>
 
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       const barber = JSON.parse(localStorage.getItem("loggedInBarber")); 
       const clientRequests = JSON.parse(localStorage.getItem("appointmentRequests")) || [];
+      const acceptedAppointments = JSON.parse(localStorage.getItem("acceptedAppointments")) || [];
       const themeColor = localStorage.getItem("themeColor") || "#ff9a9e";
 
       document.body.style.background = `linear-gradient(135deg, ${themeColor}, #fad0c4)`;
@@ -145,11 +151,15 @@
 
       const welcomeMessage = document.getElementById("welcomeMessage");
       const clientRequestsDiv = document.getElementById("clientRequests");
-      clientRequestsDiv.innerHTML = ""; 
+      const acceptedAppointmentsDiv = document.getElementById("acceptedAppointments");
+
+      clientRequestsDiv.innerHTML = "";
+      acceptedAppointmentsDiv.innerHTML = "";
 
       if (barber) {
         welcomeMessage.textContent = `Welcome, ${barber.name}!`;
 
+        // Display pending requests
         const barberRequests = clientRequests.filter(request => request.barberEmail === barber.email);
 
         if (barberRequests.length > 0) {
@@ -161,8 +171,8 @@
               <p><strong>Email:</strong> ${request.clientEmail}</p>
               <p><strong>Phone:</strong> ${request.clientPhone}</p>
               <p><strong>Hairstyle:</strong> ${request.hairstyle}</p>
-              <p><strong>Appointment Date:</strong> ${request.appointmentDate}</p>
-              <p><strong>Time Slot:</strong> ${request.appointmentTime}</p>
+              <p><strong>Date:</strong> ${formatDate(request.appointmentDate)}</p>
+              <p><strong>Time:</strong> ${formatTime(request.appointmentTime)}</p>
               <button class="btn accept" onclick="acceptRequest(${index})">Accept</button>
               <button class="btn reject" onclick="rejectRequest(${index})">Reject</button>
             `;
@@ -171,18 +181,42 @@
         } else {
           clientRequestsDiv.innerHTML = `<p class="no-requests">No appointment requests at the moment.</p>`;
         }
-      } else {
-        clientRequestsDiv.innerHTML = `<p class="no-requests">No barber logged in. Please sign up or log in.</p>`;
+
+        // Display accepted appointments
+        const barberAppointments = acceptedAppointments.filter(appointment => appointment.barberEmail === barber.email);
+
+        if (barberAppointments.length > 0) {
+          barberAppointments.forEach(appointment => {
+            const div = document.createElement("div");
+            div.classList.add("appointment-item");
+            div.innerHTML = `
+              <p><strong>Client:</strong> ${appointment.clientName}</p>
+              <p><strong>Email:</strong> ${appointment.clientEmail}</p>
+              <p><strong>Hairstyle:</strong> ${appointment.hairstyle}</p>
+              <p><strong>Date:</strong> ${appointment.formattedDate}</p>
+              <p><strong>Time:</strong> ${appointment.formattedTime}</p>
+            `;
+            acceptedAppointmentsDiv.appendChild(div);
+          });
+        } else {
+          acceptedAppointmentsDiv.innerHTML = `<p class="no-requests">No accepted appointments.</p>`;
+        }
       }
     });
 
     function acceptRequest(index) {
       let clientRequests = JSON.parse(localStorage.getItem("appointmentRequests")) || [];
+      let acceptedAppointments = JSON.parse(localStorage.getItem("acceptedAppointments")) || [];
+
       let acceptedRequest = clientRequests[index];
 
-      alert(`Appointment accepted for ${acceptedRequest.clientName}.`);
+      acceptedRequest.formattedDate = formatDate(acceptedRequest.appointmentDate);
+      acceptedRequest.formattedTime = formatTime(acceptedRequest.appointmentTime);
 
-      sendEmail(acceptedRequest.clientEmail, `Your appointment with ${acceptedRequest.barberName} has been confirmed for ${acceptedRequest.appointmentDate} at ${acceptedRequest.appointmentTime}.`);
+      acceptedAppointments.push(acceptedRequest);
+      localStorage.setItem("acceptedAppointments", JSON.stringify(acceptedAppointments));
+
+      alert(`Appointment accepted for ${acceptedRequest.clientName}.`);
 
       clientRequests.splice(index, 1);
       localStorage.setItem("appointmentRequests", JSON.stringify(clientRequests));
@@ -195,25 +229,20 @@
 
       alert(`Appointment rejected for ${rejectedRequest.clientName}.`);
 
-      sendEmail(rejectedRequest.clientEmail, `Your appointment with ${rejectedRequest.barberName} has been declined.`);
-
       clientRequests.splice(index, 1);
       localStorage.setItem("appointmentRequests", JSON.stringify(clientRequests));
       location.reload();
     }
 
-    function sendEmail(email, message) {
-      console.log(`Email sent to ${email}: ${message}`);
-      // Integration with an email service like SendGrid or SMTP needed
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
     }
 
-    document.getElementById("themeColor").addEventListener("input", function(event) {
-      const newColor = event.target.value;
-      document.body.style.background = `linear-gradient(135deg, ${newColor}, #fad0c4)`;
-      document.getElementById("dashboardTitle").style.color = newColor;
-      localStorage.setItem("themeColor", newColor);
-    });
-
+    function formatTime(timeString) {
+      const [hour, minute] = timeString.split(":");
+      return `${((hour % 12) || 12)}:${minute} ${hour >= 12 ? "PM" : "AM"}`;
+    }
   </script>
 
 </body>
