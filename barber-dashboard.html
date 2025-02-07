@@ -11,20 +11,23 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
 
   <script>
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyB9TYVDPd5yiEMgeyzYZuW04qXAlMD-C4k",
-  authDomain: "campus-cuttery.firebaseapp.com",
-  projectId: "campus-cuttery",
-  storageBucket: "campus-cuttery.firebasestorage.app",
-  messagingSenderId: "505873129716",
-  appId: "1:505873129716:web:5b2f41d92058137f0dbea1",
-  measurementId: "G-91K4SBTWQX"
-};
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyB9TYVDPd5yiEMgeyzYZuW04qXAlMD-C4k",
+      authDomain: "campus-cuttery.firebaseapp.com",
+      projectId: "campus-cuttery",
+      storageBucket: "campus-cuttery.firebasestorage.app",
+      messagingSenderId: "505873129716",
+      appId: "1:505873129716:web:5b2f41d92058137f0dbea1",
+      measurementId: "G-91K4SBTWQX"
+    };
+
+    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
   </script>
 
   <style>
+    /* Your styles for the dashboard */
     body {
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #ff9a9e, #fad0c4);
