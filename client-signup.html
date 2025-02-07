@@ -26,7 +26,7 @@
       text-align: center;
       display: flex;
       flex-direction: column;
-      align-items: center; /* Ensures everything inside is centered */
+      align-items: center;
       justify-content: center;
     }
 
@@ -37,7 +37,7 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       margin-top: 20px;
       width: 100%;
-      max-width: 450px; /* Ensures proper centering on larger screens */
+      max-width: 450px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -164,36 +164,36 @@
 
       // Filter barbers by hairstyle if selected
       if (selectedHairstyle) {
-          barbers = barbers.filter(barber => barber.hairstyles.includes(selectedHairstyle));
+        barbers = barbers.filter(barber => barber.hairstyles.includes(selectedHairstyle));
       }
 
       // If no barbers are found, display a message
       if (barbers.length === 0) {
-          barberList.innerHTML = "<p>No barbers available for this school and hairstyle.</p>";
-          return;
+        barberList.innerHTML = "<p>No barbers available for this school and hairstyle.</p>";
+        return;
       }
 
       // Display barbers as buttons
       barbers.forEach(barber => {
-          const button = document.createElement("button");
-          button.classList.add("barber-button");
-          button.innerHTML = `
-              <strong>${barber.name}</strong><br>
-              <span>${barber.location}</span><br>
-              <span>Hairstyles: ${barber.hairstyles.length ? barber.hairstyles.join(", ") : "Not specified"}</span><br>
-              <span>Available Days: ${barber.days ? barber.days.join(", ") : "Not specified"}</span><br>
-              <span>Available Times: ${formatTimeSlots(barber.timeslots)}</span>
-          `;
-          button.onclick = () => selectBarber(barber, button);
-          barberList.appendChild(button);
+        const button = document.createElement("button");
+        button.classList.add("barber-button");
+        button.innerHTML = `
+          <strong>${barber.name}</strong><br>
+          <span>${barber.location}</span><br>
+          <span>Hairstyles: ${barber.hairstyles.length ? barber.hairstyles.join(", ") : "Not specified"}</span><br>
+          <span>Available Days: ${barber.days ? barber.days.join(", ") : "Not specified"}</span><br>
+          <span>Available Times: ${formatTimeSlots(barber.timeslots)}</span>
+        `;
+        button.onclick = () => selectBarber(barber, button);
+        barberList.appendChild(button);
       });
     }
 
     // Helper function to format time slots
     function formatTimeSlots(timeslots) {
       return timeslots && timeslots.length
-          ? timeslots.filter(time => time).join(", ")
-          : "Not specified";
+        ? timeslots.filter(time => time).join(", ")
+        : "Not specified";
     }
 
     // Function to select a barber
@@ -207,7 +207,7 @@
     // Function to submit the appointment
     function submitAppointment() {
       if (selectedBarber) {
-          alert(`Appointment with ${selectedBarber.name} has been scheduled!`);
+        alert(`Appointment with ${selectedBarber.name} has been scheduled!`);
       }
     }
 
