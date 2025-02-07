@@ -4,11 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Barber Dashboard - Campus Cuttery</title>
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script> 
   <style>
+    :root {
+      --primary-color: #ff9a9e;
+      --secondary-color: #fad0c4;
+      --text-color: #333;
+    }
+
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-      color: #333;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: var(--text-color);
       margin: 0;
       padding: 0;
       display: flex;
@@ -29,21 +36,9 @@
       animation: fadeIn 0.5s ease-in-out;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
     h1 {
       font-size: 2.5em;
-      color: #ff3366;
-    }
-
-    .welcome-message {
-      font-size: 1.2em;
-      font-weight: bold;
-      color: #555;
-      margin-bottom: 15px;
+      color: var(--primary-color);
     }
 
     .client-requests-container {
@@ -64,11 +59,6 @@
       transform: scale(1.02);
     }
 
-    .client-item p {
-      margin: 5px 0;
-      font-size: 1em;
-    }
-
     .btn {
       padding: 10px 15px;
       margin: 5px;
@@ -84,19 +74,11 @@
       color: white;
     }
 
-    .btn.accept:hover {
-      background-color: #45a049;
-    }
-
     .btn.reject {
       background-color: #f44336;
       color: white;
     }
 
-    .btn.reject:hover {
-      background-color: #d32f2f;
-    }
-    
     .no-requests {
       font-size: 1.1em;
       color: #777;
@@ -115,18 +97,19 @@
   </div>
 
   <script>
+    emailjs.init("YOUR_USER_ID"); // Replace with your EmailJS user ID
+
     document.addEventListener("DOMContentLoaded", function() {
       const barber = JSON.parse(localStorage.getItem("loggedInBarber")); 
-      const clientRequests = JSON.parse(localStorage.getItem("appointmentRequests")) || [];  // Fixed key
-
-      const welcomeMessage = document.getElementById("welcomeMessage");
+      const clientRequests = JSON.parse(localStorage.getItem("appointmentRequests")) || [];  
       const clientRequestsDiv = document.getElementById("clientRequests");
+
       clientRequestsDiv.innerHTML = ""; 
 
       if (barber) {
-        welcomeMessage.textContent = `Welcome, ${barber.name}!`;
+        document.getElementById("welcomeMessage").textContent = `Welcome, ${barber.name}!`;
 
-        // Filter requests that belong to the logged-in barber
+        // Filter requests for the logged-in barber
         const barberRequests = clientRequests.filter(request => request.barberEmail === barber.email);
 
         if (barberRequests.length > 0) {
@@ -134,12 +117,14 @@
             const div = document.createElement("div");
             div.classList.add("client-item");
             div.innerHTML = `
-              <p><strong>Client:</strong> ${request.clientEmail}</p>
+              <p><strong>Client:</strong> ${request.clientName}</p>
+              <p><strong>Email:</strong> ${request.clientEmail}</p>
               <p><strong>Phone:</strong> ${request.clientPhone}</p>
-              <p><strong>Hairstyle:</strong> ${request.clientHairstyle}</p>
-              <p><strong>Time Slot:</strong> ${request.time || "Not set"}</p>
-              <button class="btn accept" onclick="acceptRequest(${index})">Accept</button>
-              <button class="btn reject" onclick="rejectRequest(${index})">Reject</button>
+              <p><strong>Hairstyle:</strong> ${request.hairstyle || "Not specified"}</p>
+              <p><strong>Date:</strong> ${request.appointmentDate}</p>
+              <p><strong>Time:</strong> ${request.appointmentTime}</p>
+              <button class="btn accept" onclick="handleAppointment(${index}, 'accepted')">Accept</button>
+              <button class="btn reject" onclick="handleAppointment(${index}, 'rejected')">Reject</button>
             `;
             clientRequestsDiv.appendChild(div);
           });
@@ -151,32 +136,49 @@
       }
     });
 
-    function acceptRequest(index) {
+    function handleAppointment(index, status) {
       let clientRequests = JSON.parse(localStorage.getItem("appointmentRequests")) || [];
-      let acceptedRequest = clientRequests[index];
+      let request = clientRequests[index];
 
-      alert(`Appointment accepted for ${acceptedRequest.clientEmail}.`);
+      let clientSubject, clientMessage, barberSubject, barberMessage;
+
+      if (status === "accepted") {
+        clientSubject = "Appointment Confirmed ✅";
+        clientMessage = `Dear ${request.clientName},\n\nYour appointment with ${request.barberName} on ${request.appointmentDate} at ${request.appointmentTime} has been confirmed!\n\n- Campus Cuttery Team`;
+        
+        barberSubject = "New Appointment Scheduled 📅";
+        barberMessage = `Dear ${request.barberName},\n\nYou have a new appointment with ${request.clientName} on ${request.appointmentDate} at ${request.appointmentTime}.\n\n- Campus Cuttery Team`;
+      } else {
+        clientSubject = "Appointment Declined ❌";
+        clientMessage = `Dear ${request.clientName},\n\nUnfortunately, your appointment with ${request.barberName} on ${request.appointmentDate} at ${request.appointmentTime} was declined.\n\n- Campus Cuttery Team`;
+
+        barberSubject = "Appointment Declined 🛑";
+        barberMessage = `Dear ${request.barberName},\n\nYou declined an appointment request from ${request.clientName} on ${request.appointmentDate} at ${request.appointmentTime}.\n\n- Campus Cuttery Team`;
+      }
+
+      sendEmail(request.clientEmail, clientSubject, clientMessage);
+      sendEmail(request.barberEmail, barberSubject, barberMessage);
 
       // Remove from pending requests
       clientRequests.splice(index, 1);
       localStorage.setItem("appointmentRequests", JSON.stringify(clientRequests));
 
-      // Refresh page to update the list
       location.reload();
     }
 
-    function rejectRequest(index) {
-      let clientRequests = JSON.parse(localStorage.getItem("appointmentRequests")) || [];
-      let rejectedRequest = clientRequests[index];
-
-      alert(`Appointment rejected for ${rejectedRequest.clientEmail}.`);
-
-      // Remove from pending requests
-      clientRequests.splice(index, 1);
-      localStorage.setItem("appointmentRequests", JSON.stringify(clientRequests));
-
-      // Refresh page to update the list
-      location.reload();
+    function sendEmail(to, subject, message) {
+      emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+        to_email: to,
+        subject: subject,
+        message: message
+      }).then(
+        function(response) {
+          console.log("Email sent successfully:", response);
+        },
+        function(error) {
+          console.log("Email failed to send:", error);
+        }
+      );
     }
   </script>
 
