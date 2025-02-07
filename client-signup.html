@@ -5,7 +5,105 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Client Sign Up - Campus Cuttery</title>
   <style>
-    /* Same style as previous */
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f8ff;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      padding: 20px;
+      box-sizing: border-box;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .form-container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+      width: 100%;
+      max-width: 450px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    input, select, button {
+      display: block;
+      padding: 12px;
+      margin: 10px auto;
+      font-size: 16px;
+      width: 90%;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    button {
+      background: #ffcc00;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 12px;
+      display: none;
+      width: 100%;
+    }
+
+    button:hover {
+      background: #ff9900;
+    }
+
+    h2 {
+      margin-top: 40px;
+    }
+
+    .barber-list {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .barber-button {
+      background-color: #ffcc00;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      margin: 10px;
+      transition: background-color 0.3s, transform 0.3s;
+      width: 100%;
+      max-width: 300px;
+      text-align: left;
+    }
+
+    .barber-button:hover {
+      background-color: #ff9900;
+    }
+
+    .barber-button.selected {
+      background-color: #ff6600;
+    }
   </style>
 </head>
 <body>
