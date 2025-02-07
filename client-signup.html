@@ -7,104 +7,68 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      background: #f0f8ff;
       color: #333;
+      text-align: center;
       margin: 0;
       padding: 0;
       display: flex;
-      flex-direction: column;
-      align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      text-align: center;
+      align-items: center;
+      height: 100vh;
     }
-
     .container {
       width: 100%;
-      max-width: 700px;
+      max-width: 600px;
       padding: 20px;
       box-sizing: border-box;
-      background: #fff;
-      border-radius: 15px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
-
-    .form-container {
-      padding: 20px;
-      border-radius: 10px;
-      background-color: #fff;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      margin-bottom: 30px;
+    form {
+      width: 100%;
+      margin: 0 auto;
     }
-
-    h1 {
-      font-size: 2.5em;
-      color: #ff3366;
-      margin-bottom: 20px;
-    }
-
-    h2 {
-      font-size: 1.8em;
-      color: #333;
-      margin-top: 30px;
-      margin-bottom: 20px;
-    }
-
     input, select, button {
       display: block;
-      padding: 12px;
-      margin: 10px auto;
+      padding: 10px;
+      margin: 10px 0;
       font-size: 16px;
-      width: 90%;
-      border: 1px solid #ddd;
-      border-radius: 10px;
       box-sizing: border-box;
-      text-align: center;
-      transition: all 0.3s ease;
+      width: 100%;
     }
-
     button {
       background: #ffcc00;
       border: none;
+      border-radius: 5px;
       cursor: pointer;
-      font-size: 16px;
-      font-weight: bold;
-      padding: 12px;
-      display: none;
+      font-size: 14px;
+      padding: 10px 20px;
       width: 100%;
-      margin-top: 20px;
-      border-radius: 8px;
     }
-
     button:hover {
       background: #ff9900;
     }
-
-    select, input {
-      background: #f9f9f9;
-      border-color: #e0e0e0;
+    select {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background: #fff url('https://upload.wikimedia.org/wikipedia/commons/a/a5/Down_triangle.svg') no-repeat right center;
+      background-size: 16px;
+      padding-right: 35px;
     }
-
-    select:focus, input:focus {
-      border-color: #ff3366;
-      outline: none;
-      background: #fff;
-    }
-
     .barber-list {
       margin-top: 20px;
+      list-style: none;
+      padding: 0;
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      width: 100%;
     }
-
     .barber-button {
       background-color: #ffcc00;
       color: white;
       border: none;
       cursor: pointer;
-      padding: 12px;
+      padding: 10px 20px;
       font-size: 16px;
       border-radius: 8px;
       margin: 10px;
@@ -113,123 +77,118 @@
       max-width: 300px;
       text-align: left;
     }
-
     .barber-button:hover {
       background-color: #ff9900;
     }
-
     .barber-button.selected {
       background-color: #ff6600;
     }
-
-    .no-barbers {
-      font-size: 1.2em;
-      color: #777;
-      font-style: italic;
+    .barber-info {
+      margin-top: 10px;
+      font-size: 14px;
     }
-
   </style>
 </head>
 <body>
 
   <div class="container">
-    <div class="form-container">
-      <h1>Client Sign Up</h1>
-      <form id="clientForm">
-        <input type="email" id="clientEmail" name="email" placeholder="Email" required>
-        <input type="tel" id="clientPhone" name="phone" placeholder="Phone Number" required>
-        
-        <select name="school" id="clientSchool" required>
-          <option value="">Select School</option>
-          <option value="uva">University of Virginia</option>
-          <option value="virginia-tech">Virginia Tech</option>
-          <option value="william-mary">William and Mary</option>
-          <option value="jmu">James Madison University</option>
-        </select>
+    <h1>Client Sign Up</h1>
+    <form id="clientForm">
+      <input type="email" id="clientEmail" name="email" placeholder="Email" required>
+      <input type="tel" id="clientPhone" name="phone" placeholder="Phone Number" required>
+      
+      <select name="school" id="clientSchool" required onchange="displayBarbers()">
+        <option value="">Select School</option>
+        <option value="uva">University of Virginia</option>
+        <option value="virginia-tech">Virginia Tech</option>
+        <option value="william-mary">William and Mary</option>
+        <option value="jmu">James Madison University</option>
+      </select>
 
-        <select name="hairstyle" id="hairstyle">
-          <option value="">Select a Hairstyle (Optional)</option>
-          <option value="beard trim">Beard Trim</option>
-          <option value="buzz cut">Buzz Cut</option>
-          <option value="bald">Bald</option>
-          <option value="mullet">Mullet</option>
-          <option value="low taper fade">Low Taper Fade</option>
-          <option value="blowout taper">Blowout Taper</option>
-          <option value="textured fringe">Textured Fringe</option>
-          <option value="wolfcut">Wolfcut</option>
-          <option value="middle part">Middle Part</option>
-          <option value="straightened hair">Straightened Hair</option>
-          <option value="dyed hair">Dyed Hair</option>
-        </select>
-      </form>
-    </div>
+      <select name="hairstyle" id="hairstyle" onchange="displayBarbers()">
+        <option value="">Select a Hairstyle (Optional)</option>
+        <option value="beard trim">Beard Trim</option>
+        <option value="buzz cut">Buzz Cut</option>
+        <option value="bald">Bald</option>
+        <option value="mullet">Mullet</option>
+        <option value="low taper fade">Low Taper Fade</option>
+        <option value="blowout taper">Blowout Taper</option>
+        <option value="textured fringe">Textured Fringe</option>
+        <option value="wolfcut">Wolfcut</option>
+        <option value="middle part">Middle Part</option>
+        <option value="straightened hair">Straightened Hair</option>
+        <option value="dyed hair">Dyed Hair</option>
+        <option value="other">Other</option>
+      </select>
 
+      <button type="submit">Submit Appointment Request</button>
+    </form>
+
+    <!-- Barber List Section -->
     <h2>Available Barbers</h2>
-    <div id="barberList" class="barber-list"></div>
-
-    <button id="submitAppointment" onclick="submitAppointment()">Submit Appointment Request</button>
+    <div id="barberList"></div>
   </div>
 
   <script>
-    let selectedBarber = null;
+    // Handle form submission for client registration
+    document.getElementById("clientForm").addEventListener("submit", function(e) {
+      e.preventDefault();
 
+      const clientData = {
+        email: document.getElementById("clientEmail").value,
+        phone: document.getElementById("clientPhone").value,
+        hairstyle: document.getElementById("hairstyle").value
+      };
+
+      localStorage.setItem("clientData", JSON.stringify(clientData));
+
+      alert("Client registered successfully!");
+      window.location.href = "appointment.html";
+    });
+
+    // Display barbers based on selected school and hairstyle
     function displayBarbers() {
-      console.log("displayBarbers function called");
+      const school = document.getElementById("clientSchool").value;
+      const hairstyle = document.getElementById("hairstyle").value;
       const barberList = document.getElementById("barberList");
       barberList.innerHTML = "";
 
-      // Retrieve all barbers from localStorage
-      const barbersBySchool = JSON.parse(localStorage.getItem('barbersBySchool')) || {};
-      console.log(barbersBySchool);  // Check if data is being retrieved
+      if (school) {
+        const barbersBySchool = JSON.parse(localStorage.getItem('barbersBySchool')) || {};
+        const barbers = barbersBySchool[school] || [];
 
-      let allBarbers = [];
-      for (let school in barbersBySchool) {
-        allBarbers = allBarbers.concat(barbersBySchool[school]);
-      }
+        let filteredBarbers = barbers;
 
-      // If no barbers are found, display a message
-      if (allBarbers.length === 0) {
-        barberList.innerHTML = "<p class='no-barbers'>No barbers available.</p>";
-        return;
-      }
+        // If a hairstyle is selected, filter by hairstyle
+        if (hairstyle) {
+          filteredBarbers = barbers.filter(barber => barber.hairstyles.includes(hairstyle));
+        }
 
-      // Display all barbers as buttons
-      allBarbers.forEach(barber => {
-        const button = document.createElement("button");
-        button.classList.add("barber-button");
-        button.innerHTML = `
-          <strong>${barber.name}</strong><br>
-          <span>${barber.location}</span><br>
-          <span>Hairstyles: ${barber.hairstyles.length ? barber.hairstyles.join(", ") : "Not specified"}</span><br>
-          <span>Available Days: ${barber.days ? barber.days.join(", ") : "Not specified"}</span><br>
-          <span>Available Times: ${formatTimeSlots(barber.timeslots)}</span>
-        `;
-        button.onclick = () => selectBarber(barber, button);
-        barberList.appendChild(button);
-      });
-    }
-
-    // Helper function to format time slots
-    function formatTimeSlots(timeslots) {
-      return timeslots && timeslots.length
-        ? timeslots.filter(time => time).join(", ")
-        : "Not specified";
-    }
-
-    function selectBarber(barber, button) {
-      document.querySelectorAll(".barber-button").forEach(btn => btn.classList.remove("selected"));
-      button.classList.add("selected");
-      selectedBarber = barber;
-      document.getElementById("submitAppointment").style.display = "block";  // Show button when a barber is selected
-    }
-
-    function submitAppointment() {
-      if (selectedBarber) {
-        alert(`Appointment with ${selectedBarber.name} has been scheduled!`);
+        // If there are matching barbers, display them
+        if (filteredBarbers.length > 0) {
+          filteredBarbers.forEach(barber => {
+            const button = document.createElement("button");
+            button.classList.add("barber-button");
+            button.innerHTML = `
+              <strong>${barber.name}</strong><br>
+              <span>${barber.location}</span><br>
+              <span>Available: ${barber.days.join(", ")}</span>
+            `;
+            button.onclick = () => selectBarber(barber);
+            barberList.appendChild(button);
+          });
+        } else {
+          barberList.innerHTML = "<p>No barbers available for this selection.</p>";
+        }
       }
     }
 
-    window.onload = displayBarbers;
+    // Select a barber
+    function selectBarber(barber) {
+      alert(`You selected ${barber.name} for your appointment.`);
+
+      localStorage.setItem("selectedBarber", JSON.stringify(barber));
+    }
   </script>
 
 </body>
