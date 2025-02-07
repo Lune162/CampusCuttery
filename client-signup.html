@@ -6,10 +6,9 @@
   <title>Client Sign Up - Campus Cuttery</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f0f8ff;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f0f8ff, #dbeafe);
       color: #333;
-      text-align: center;
       margin: 0;
       padding: 0;
       display: flex;
@@ -18,34 +17,51 @@
       height: 100vh;
     }
     .container {
-      width: 100%;
+      background: white;
       max-width: 600px;
+      width: 90%;
       padding: 20px;
-      box-sizing: border-box;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      animation: fadeIn 0.5s ease-in-out;
     }
-    form {
-      width: 100%;
-      margin: 0 auto;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h1 {
+      color: #ff6600;
+      font-size: 2em;
+      margin-bottom: 10px;
     }
     input, select, button {
       display: block;
-      padding: 10px;
+      width: 100%;
+      padding: 12px;
       margin: 10px 0;
       font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      outline: none;
       box-sizing: border-box;
-      width: 100%;
+      transition: 0.3s ease;
+    }
+    input:focus, select:focus {
+      border-color: #ff6600;
+      background: #fff;
     }
     button {
-      background: #ffcc00;
+      background: #ff6600;
+      color: white;
       border: none;
-      border-radius: 5px;
+      font-weight: bold;
       cursor: pointer;
-      font-size: 14px;
-      padding: 10px 20px;
-      width: 100%;
+      transition: background 0.3s ease;
+      font-size: 18px;
     }
     button:hover {
-      background: #ff9900;
+      background: #ff4500;
     }
     .barber-list {
       margin-top: 20px;
@@ -58,11 +74,11 @@
       color: white;
       border: none;
       cursor: pointer;
-      padding: 10px 20px;
+      padding: 12px;
       font-size: 16px;
       border-radius: 8px;
       margin: 10px;
-      transition: background-color 0.3s, transform 0.3s;
+      transition: background-color 0.3s ease-in-out;
       width: 100%;
       max-width: 300px;
       text-align: left;
