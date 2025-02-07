@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Appointment Confirmation - Campus Cuttery</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f8ff;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 700px;
+      padding: 20px;
+      box-sizing: border-box;
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: #ff3366;
+      font-size: 2.5em;
+    }
+
+    p {
+      font-size: 1.2em;
+      color: #333;
+    }
+
+    button {
+      background: #ffcc00;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background: #ff9900;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Appointment Submitted</h1>
+    <p id="confirmationMessage">Thank you for submitting your appointment!</p>
+    <button onclick="goBack()">Go Back</button>
+  </div>
+
+  <script>
+    // Function to load the appointment details from localStorage and display the confirmation message
+    window.onload = function() {
+      const appointment = JSON.parse(localStorage.getItem('appointmentRequest'));
+
+      if (appointment) {
+        document.getElementById('confirmationMessage').innerText = `Thank you for submitting your appointment to ${appointment.barberName}!`;
+      } else {
+        document.getElementById('confirmationMessage').innerText = 'No appointment found.';
+      }
+    };
+
+    // Function to go back to the client sign-up page
+    function goBack() {
+      window.location.href = 'index.html'; // Replace 'index.html' with your client sign-up page URL
+    }
+  </script>
+
+</body>
+</html>

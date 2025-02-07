@@ -130,6 +130,8 @@
   </div>
 
   <script>
+    let selectedBarber = null;
+
     // Handle form submission for client registration
     document.getElementById("clientForm").addEventListener("submit", function(e) {
       e.preventDefault();
@@ -142,8 +144,22 @@
 
       localStorage.setItem("clientData", JSON.stringify(clientData));
 
+      // Store selected barber appointment data
+      const appointmentRequest = {
+        clientEmail: clientData.email,
+        clientPhone: clientData.phone,
+        clientHairstyle: clientData.hairstyle,
+        barberName: selectedBarber.name,
+        barberEmail: selectedBarber.email,
+        time: "TBD" // Can add a time field later if required
+      };
+
+      let appointmentRequests = JSON.parse(localStorage.getItem("appointmentRequests")) || [];
+      appointmentRequests.push(appointmentRequest);
+      localStorage.setItem("appointmentRequests", JSON.stringify(appointmentRequests));
+
       alert("Client registered successfully!");
-      window.location.href = "appointment.html";
+      window.location.href = "appointment.html";  // Redirect to appointment page
     });
 
     // Display barbers based on selected school and hairstyle
@@ -186,8 +202,7 @@
     // Select a barber
     function selectBarber(barber) {
       alert(`You selected ${barber.name} for your appointment.`);
-
-      localStorage.setItem("selectedBarber", JSON.stringify(barber));
+      selectedBarber = barber;
     }
   </script>
 
