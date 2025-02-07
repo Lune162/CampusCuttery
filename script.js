@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     clientPhone: clientData.phone,
                     hairstyle: clientData.hairstyle,
                     barberEmail: selectedBarber.email,
-                    time: "Selected Time Here" // Placeholder
+                    time: "Selected Time Here" // Placeholder for time
                 };
 
                 const clientRequests = JSON.parse(localStorage.getItem("clientRequests")) || [];
@@ -53,12 +53,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     .map(input => input.value).filter(time => time)
             };
 
+            // Save barber data to localStorage under 'barbersBySchool'
             let barbersBySchool = JSON.parse(localStorage.getItem("barbersBySchool")) || {};
 
             if (!barbersBySchool[barberData.school]) {
                 barbersBySchool[barberData.school] = [];
             }
 
+            // Add new barber to the correct school
             barbersBySchool[barberData.school].push(barberData);
             localStorage.setItem("barbersBySchool", JSON.stringify(barbersBySchool));
 
@@ -70,27 +72,35 @@ document.addEventListener("DOMContentLoaded", function () {
     // Handle Displaying Barbers for Clients
     if (document.getElementById("clientSchool")) {
         document.getElementById("clientSchool").addEventListener("change", displayBarbers);
+        document.getElementById("hairstyle").addEventListener("change", displayBarbers);
     }
 });
 
 // Function to Display Barbers When Client Selects a School
 function displayBarbers() {
     const school = document.getElementById("clientSchool").value;
+    const selectedHairstyle = document.getElementById("hairstyle").value;
     const barberList = document.getElementById("barberList");
     barberList.innerHTML = "";
 
-    if (!school) return;
+    if (!school) return; // Exit if no school is selected
 
-    let barbersBySchool = JSON.parse(localStorage.getItem("barbersBySchool")) || {};
+    // Retrieve barbers from localStorage
+    const barbersBySchool = JSON.parse(localStorage.getItem('barbersBySchool')) || {};
     let barbers = barbersBySchool[school] || [];
 
-    console.log("Barbers for", school, barbers); // Debugging
+    // Filter barbers by hairstyle if selected
+    if (selectedHairstyle) {
+        barbers = barbers.filter(barber => barber.hairstyles.includes(selectedHairstyle));
+    }
 
+    // If no barbers are found, display a message
     if (barbers.length === 0) {
-        barberList.innerHTML = "<p>No barbers available for this school.</p>";
+        barberList.innerHTML = "<p>No barbers available for this school and hairstyle.</p>";
         return;
     }
 
+    // Display barbers as buttons
     barbers.forEach(barber => {
         const button = document.createElement("button");
         button.classList.add("barber-button");
@@ -108,7 +118,9 @@ function displayBarbers() {
 
 // Helper Function to Format Time Slots
 function formatTimeSlots(timeslots) {
-    return timeslots && timeslots.length ? timeslots.filter(time => time).join(", ") : "Not specified";
+    return timeslots && timeslots.length
+        ? timeslots.filter(time => time).join(", ")
+        : "Not specified";
 }
 
 // Function to Select a Barber
