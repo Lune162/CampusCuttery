@@ -204,46 +204,46 @@
     }
 
     function handleSubmit(event) {
-    event.preventDefault();
+      event.preventDefault();
 
-    // Capture barber form data
-    const barberData = {
-        name: document.getElementById('barberName').value,
-        email: document.getElementById('barberEmail').value,
-        password: document.getElementById('barberPassword').value,
-        phone: document.getElementById('barberPhone').value,
-        location: document.getElementById('location').value,
-        school: document.getElementById('school').value,
-        hairstyles: Array.from(document.getElementsByClassName('hairstyle-button'))
-            .filter(button => button.classList.contains('selected'))
-            .map(button => button.innerText),
-        days: Array.from(document.querySelectorAll('input[name="days"]:checked')).map(day => day.value),
-        timeslots: Array.from(document.querySelectorAll('.timeslot-container input'))
-            .map(input => input.value)
-    };
+      // Capture barber form data
+      const barberData = {
+          name: document.getElementById('barberName').value,
+          email: document.getElementById('barberEmail').value,
+          password: document.getElementById('barberPassword').value,
+          phone: document.getElementById('barberPhone').value,
+          location: document.getElementById('location').value,
+          school: document.getElementById('school').value,
+          hairstyles: Array.from(document.getElementsByClassName('hairstyle-button'))
+              .filter(button => button.classList.contains('selected'))
+              .map(button => button.innerText),
+          days: Array.from(document.querySelectorAll('input[name="days"]:checked')).map(day => day.value),
+          timeslots: Array.from(document.querySelectorAll('.timeslot-container input'))
+              .map(input => input.value)
+      };
 
-    console.log("Barber Data:", barberData); // Debugging
+      console.log("Barber Data:", barberData); // Debugging
 
-    // Retrieve existing barbers from localStorage or initialize as empty object
-    let barbersBySchool = JSON.parse(localStorage.getItem('barbersBySchool')) || {};
+      // Retrieve existing barbers from localStorage or initialize as empty object
+      let barbersBySchool = JSON.parse(localStorage.getItem('barbersBySchool')) || {};
 
-    // If no school entry exists, create one
-    if (!barbersBySchool[barberData.school]) {
-        barbersBySchool[barberData.school] = [];
+      // If no school entry exists, create one
+      if (!barbersBySchool[barberData.school]) {
+          barbersBySchool[barberData.school] = [];
+      }
+
+      // Add new barber to the correct school
+      barbersBySchool[barberData.school].push(barberData);
+
+      // Save the updated barbersBySchool back to localStorage
+      localStorage.setItem('barbersBySchool', JSON.stringify(barbersBySchool));
+
+      // Optionally, store barber data as 'loggedInBarber' for future use
+      localStorage.setItem('loggedInBarber', JSON.stringify(barberData));
+
+      alert('Barber signed up successfully!');
+      window.location.href = 'barber-dashboard.html'; // Redirect to barber dashboard
     }
-
-    // Add new barber to the correct school
-    barbersBySchool[barberData.school].push(barberData);
-
-    // Save the updated barbersBySchool back to localStorage
-    localStorage.setItem('barbersBySchool', JSON.stringify(barbersBySchool));
-
-    // Optionally, store barber data as 'loggedInBarber' for future use
-    localStorage.setItem('loggedInBarber', JSON.stringify(barberData));
-
-    alert('Barber signed up successfully!');
-    window.location.href = 'barber-dashboard.html'; // Redirect to barber dashboard
-}
   </script>
 
 </body>
