@@ -162,21 +162,6 @@
           <option value="jmu">James Madison University</option>
         </select>
 
-        <select name="hairstyle" id="hairstyle" onchange="displayBarbers()">
-          <option value="">Select a Hairstyle (Optional)</option>
-          <option value="beard trim">Beard Trim</option>
-          <option value="buzz cut">Buzz Cut</option>
-          <option value="bald">Bald</option>
-          <option value="mullet">Mullet</option>
-          <option value="low taper fade">Low Taper Fade</option>
-          <option value="blowout taper">Blowout Taper</option>
-          <option value="textured fringe">Textured Fringe</option>
-          <option value="wolfcut">Wolfcut</option>
-          <option value="middle part">Middle Part</option>
-          <option value="straightened hair">Straightened Hair</option>
-          <option value="dyed hair">Dyed Hair</option>
-        </select>
-
         <button type="submit">Submit Appointment Request</button>
       </form>
     </div>
@@ -191,32 +176,29 @@
   <script>
     let selectedBarber = null;
 
-    document.getElementById("clientForm").addEventListener("submit", function(e) {
-      e.preventDefault();
+    function groupDaysByTimes(barber) {
+      const daysGrouped = {};
+      barber.days.forEach((day, index) => {
+        const time = barber.timeslots[index];
+        if (!daysGrouped[time]) {
+          daysGrouped[time] = [];
+        }
+        daysGrouped[time].push(day);
+      });
 
-      if (!selectedBarber) {
-        alert("Please select a barber.");
-        return;
+      let availability = [];
+      for (const [time, days] of Object.entries(daysGrouped)) {
+        if (days.length === 5 && days.includes("monday") && days.includes("friday")) {
+          availability.push(`Weekdays ${time}`);
+        } else if (days.length === 2 && days.includes("saturday") && days.includes("sunday")) {
+          availability.push(`Weekends ${time}`);
+        } else {
+          availability.push(`${days.join(", ")} ${time}`);
+        }
       }
 
-      const appointmentData = {
-        clientName: document.getElementById("clientName").value,
-        clientEmail: document.getElementById("clientEmail").value,
-        clientPhone: document.getElementById("clientPhone").value,
-        appointmentDate: document.getElementById("appointmentDate").value,
-        appointmentTime: document.getElementById("appointmentTime").value,
-        hairstyle: document.getElementById("hairstyle").value,
-        barberName: selectedBarber.name,
-        barberEmail: selectedBarber.email
-      };
-
-      let requests = JSON.parse(localStorage.getItem("appointmentRequests")) || [];
-      requests.push(appointmentData);
-      localStorage.setItem("appointmentRequests", JSON.stringify(requests));
-
-      alert(`Appointment request sent to ${appointmentData.barberName}!`);
-      window.location.href = "appointment.html";
-    });
+      return availability.join(" | ");
+    }
 
     function displayBarbers() {
       const school = document.getElementById("clientSchool").value;
@@ -239,8 +221,7 @@
         button.innerHTML = `
           <strong>${barber.name}</strong><br>
           <span>${barber.location}</span><br>
-          <span>Available: ${barber.days.join(", ")}</span><br>
-          <span>Times: ${barber.timeslots.filter(time => time).join(", ") || "Not specified"}</span>
+          <span>Available: ${groupDaysByTimes(barber)}</span>
         `;
         button.onclick = () => selectBarber(barber, button);
         barberList.appendChild(button);
@@ -252,6 +233,29 @@
       button.classList.add("selected");
       selectedBarber = barber;
     }
+
+    document.getElementById("clientForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      if (!selectedBarber) {
+        alert("Please select a barber.");
+        return;
+      }
+
+      const appointmentData = {
+        clientName: document.getElementById("clientName").value,
+        clientEmail: document.getElementById("clientEmail").value,
+        appointmentDate: document.getElementById("appointmentDate").value,
+        appointmentTime: document.getElementById("appointmentTime").value,
+        barberName: selectedBarber.name,
+      };
+
+      let requests = JSON.parse(localStorage.getItem("appointmentRequests")) || [];
+      requests.push(appointmentData);
+      localStorage.setItem("appointmentRequests", JSON.stringify(requests));
+
+      alert(`Appointment request sent to ${appointmentData.barberName}!`);
+      window.location.href = "appointment.html";
+    });
   </script>
 
 </body>
