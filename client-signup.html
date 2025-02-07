@@ -16,25 +16,38 @@
       align-items: center;
       height: 100vh;
     }
-    .container {
-      background: white;
-      max-width: 600px;
+    
+    .main-container {
+      display: flex;
+      max-width: 1100px;
       width: 90%;
-      padding: 20px;
+      background: white;
       border-radius: 15px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      text-align: center;
+      overflow: hidden;
       animation: fadeIn 0.5s ease-in-out;
     }
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(-10px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    /* Left Section - Client Sign-Up */
+    .form-container {
+      width: 40%;
+      padding: 20px;
+      background: #fff;
+      border-right: 2px solid #ddd;
+    }
+
     h1 {
       color: #ff6600;
       font-size: 2em;
       margin-bottom: 10px;
+      text-align: center;
     }
+
     input, select, button {
       display: block;
       width: 100%;
@@ -47,10 +60,12 @@
       box-sizing: border-box;
       transition: 0.3s ease;
     }
+
     input:focus, select:focus {
       border-color: #ff6600;
       background: #fff;
     }
+
     button {
       background: #ff6600;
       color: white;
@@ -60,15 +75,31 @@
       transition: background 0.3s ease;
       font-size: 18px;
     }
+
     button:hover {
       background: #ff4500;
     }
+
+    /* Right Section - Available Barbers */
+    .barber-container {
+      width: 60%;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 1.8em;
+      color: #ff6600;
+      margin-bottom: 10px;
+    }
+
     .barber-list {
-      margin-top: 20px;
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
+      gap: 10px;
     }
+
     .barber-button {
       background-color: #ffcc00;
       color: white;
@@ -77,63 +108,84 @@
       padding: 12px;
       font-size: 16px;
       border-radius: 8px;
-      margin: 10px;
       transition: background-color 0.3s ease-in-out;
-      width: 100%;
-      max-width: 300px;
+      width: 90%;
       text-align: left;
     }
+
     .barber-button:hover {
       background-color: #ff9900;
     }
+
     .barber-button.selected {
       background-color: #ff6600;
+    }
+
+    @media (max-width: 900px) {
+      .main-container {
+        flex-direction: column;
+      }
+
+      .form-container, .barber-container {
+        width: 100%;
+        border-right: none;
+      }
+
+      .barber-button {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <h1>Client Sign Up</h1>
-    <form id="clientForm">
-      <input type="text" id="clientName" name="name" placeholder="Full Name" required>
-      <input type="email" id="clientEmail" name="email" placeholder="Email" required>
-      <input type="tel" id="clientPhone" name="phone" placeholder="Phone Number" required>
+  <div class="main-container">
+    <!-- Client Sign-Up Form -->
+    <div class="form-container">
+      <h1>Client Sign Up</h1>
+      <form id="clientForm">
+        <input type="text" id="clientName" name="name" placeholder="Full Name" required>
+        <input type="email" id="clientEmail" name="email" placeholder="Email" required>
+        <input type="tel" id="clientPhone" name="phone" placeholder="Phone Number" required>
 
-      <label for="appointmentDate">Select Date:</label>
-      <input type="date" id="appointmentDate" name="date" required>
+        <label for="appointmentDate">Select Date:</label>
+        <input type="date" id="appointmentDate" name="date" required>
 
-      <label for="appointmentTime">Select Time:</label>
-      <input type="time" id="appointmentTime" name="time" required>
+        <label for="appointmentTime">Select Time:</label>
+        <input type="time" id="appointmentTime" name="time" required>
 
-      <select name="school" id="clientSchool" required onchange="displayBarbers()">
-        <option value="">Select School</option>
-        <option value="uva">University of Virginia</option>
-        <option value="virginia-tech">Virginia Tech</option>
-        <option value="william-mary">William and Mary</option>
-        <option value="jmu">James Madison University</option>
-      </select>
+        <select name="school" id="clientSchool" required onchange="displayBarbers()">
+          <option value="">Select School</option>
+          <option value="uva">University of Virginia</option>
+          <option value="virginia-tech">Virginia Tech</option>
+          <option value="william-mary">William and Mary</option>
+          <option value="jmu">James Madison University</option>
+        </select>
 
-      <select name="hairstyle" id="hairstyle" onchange="displayBarbers()">
-        <option value="">Select a Hairstyle (Optional)</option>
-        <option value="beard trim">Beard Trim</option>
-        <option value="buzz cut">Buzz Cut</option>
-        <option value="bald">Bald</option>
-        <option value="mullet">Mullet</option>
-        <option value="low taper fade">Low Taper Fade</option>
-        <option value="blowout taper">Blowout Taper</option>
-        <option value="textured fringe">Textured Fringe</option>
-        <option value="wolfcut">Wolfcut</option>
-        <option value="middle part">Middle Part</option>
-        <option value="straightened hair">Straightened Hair</option>
-        <option value="dyed hair">Dyed Hair</option>
-      </select>
+        <select name="hairstyle" id="hairstyle" onchange="displayBarbers()">
+          <option value="">Select a Hairstyle (Optional)</option>
+          <option value="beard trim">Beard Trim</option>
+          <option value="buzz cut">Buzz Cut</option>
+          <option value="bald">Bald</option>
+          <option value="mullet">Mullet</option>
+          <option value="low taper fade">Low Taper Fade</option>
+          <option value="blowout taper">Blowout Taper</option>
+          <option value="textured fringe">Textured Fringe</option>
+          <option value="wolfcut">Wolfcut</option>
+          <option value="middle part">Middle Part</option>
+          <option value="straightened hair">Straightened Hair</option>
+          <option value="dyed hair">Dyed Hair</option>
+        </select>
 
-      <button type="submit">Submit Appointment Request</button>
-    </form>
+        <button type="submit">Submit Appointment Request</button>
+      </form>
+    </div>
 
-    <h2>Available Barbers</h2>
-    <div id="barberList"></div>
+    <!-- Available Barbers Section -->
+    <div class="barber-container">
+      <h2>Select a Barber</h2>
+      <div id="barberList" class="barber-list"></div>
+    </div>
   </div>
 
   <script>
@@ -168,7 +220,6 @@
 
     function displayBarbers() {
       const school = document.getElementById("clientSchool").value;
-      const hairstyle = document.getElementById("hairstyle").value;
       const barberList = document.getElementById("barberList");
       barberList.innerHTML = "";
 
@@ -177,23 +228,19 @@
       const barbersBySchool = JSON.parse(localStorage.getItem("barbersBySchool")) || {};
       const barbers = barbersBySchool[school] || [];
 
-      let filteredBarbers = barbers;
-      if (hairstyle) {
-        filteredBarbers = barbers.filter(barber => barber.hairstyles.includes(hairstyle));
-      }
-
-      if (filteredBarbers.length === 0) {
+      if (barbers.length === 0) {
         barberList.innerHTML = "<p>No available barbers.</p>";
         return;
       }
 
-      filteredBarbers.forEach(barber => {
+      barbers.forEach(barber => {
         const button = document.createElement("button");
         button.classList.add("barber-button");
         button.innerHTML = `
           <strong>${barber.name}</strong><br>
           <span>${barber.location}</span><br>
-          <span>Available: ${barber.days.join(", ")}</span>
+          <span>Available: ${barber.days.join(", ")}</span><br>
+          <span>Times: ${barber.timeslots.filter(time => time).join(", ") || "Not specified"}</span>
         `;
         button.onclick = () => selectBarber(barber, button);
         barberList.appendChild(button);
