@@ -1,47 +1,61 @@
+// Initialize Firebase
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// Handle Client Sign-Up
 document.addEventListener("DOMContentLoaded", function () {
     const clientForm = document.getElementById("clientForm");
     const barberForm = document.getElementById("barberForm");
 
-    // Handle Client Form Submission
     if (clientForm) {
         clientForm.addEventListener("submit", function (e) {
-            e.preventDefault(); // Prevent default form submission
+            e.preventDefault();
+
+            const email = document.getElementById("clientEmail").value;
+            const password = "defaultPass123";  // Can be changed later
             const clientData = {
-                email: document.getElementById("clientEmail").value,
+                name: document.getElementById("clientName").value,
+                email: email,
                 phone: document.getElementById("clientPhone").value,
                 hairstyle: document.getElementById("hairstyle").value
             };
 
-            localStorage.setItem("clientData", JSON.stringify(clientData));
-
-            const selectedBarber = JSON.parse(localStorage.getItem("selectedBarber"));
-            if (selectedBarber) {
-                const appointmentRequest = {
-                    clientEmail: clientData.email,
-                    clientPhone: clientData.phone,
-                    hairstyle: clientData.hairstyle,
-                    barberEmail: selectedBarber.email,
-                    time: "Selected Time Here" // Placeholder for time
-                };
-
-                const clientRequests = JSON.parse(localStorage.getItem("clientRequests")) || [];
-                clientRequests.push(appointmentRequest);
-                localStorage.setItem("clientRequests", JSON.stringify(clientRequests));
-
-                alert("Appointment request sent to barber!");
-            }
-            alert("Client registered successfully!");
+            // Create user in Firebase Auth
+            auth.createUserWithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    const user = userCredential.user;
+                    return db.collection("clients").doc(user.uid).set(clientData);
+                })
+                .then(() => {
+                    alert("Client registered successfully!");
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert(error.message);
+                });
         });
     }
 
-    // Handle Barber Form Submission (Now Stores Multiple Barbers)
+    // Handle Barber Sign-Up
     if (barberForm) {
         barberForm.addEventListener("submit", function (e) {
             e.preventDefault();
 
+            const email = document.getElementById("barberEmail").value;
+            const password = "defaultPass123"; 
             const barberData = {
                 name: document.getElementById("barberName").value,
-                email: document.getElementById("barberEmail").value,
+                email: email,
                 phone: document.getElementById("barberPhone").value,
                 location: document.getElementById("location").value,
                 school: document.getElementById("school").value,
@@ -53,19 +67,20 @@ document.addEventListener("DOMContentLoaded", function () {
                     .map(input => input.value).filter(time => time)
             };
 
-            // Save barber data to localStorage under 'barbersBySchool'
-            let barbersBySchool = JSON.parse(localStorage.getItem("barbersBySchool")) || {};
-
-            if (!barbersBySchool[barberData.school]) {
-                barbersBySchool[barberData.school] = [];
-            }
-
-            // Add new barber to the correct school
-            barbersBySchool[barberData.school].push(barberData);
-            localStorage.setItem("barbersBySchool", JSON.stringify(barbersBySchool));
-
-            alert("Barber registered successfully!");
-            window.location.href = "barber-dashboard.html";
+            // Create barber in Firebase Auth
+            auth.createUserWithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    const user = userCredential.user;
+                    return db.collection("barbers").doc(user.uid).set(barberData);
+                })
+                .then(() => {
+                    alert("Barber registered successfully!");
+                    window.location.href = "barber-dashboard.html";
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert(error.message);
+                });
         });
     }
 
@@ -83,44 +98,42 @@ function displayBarbers() {
     const barberList = document.getElementById("barberList");
     barberList.innerHTML = "";
 
-    if (!school) return; // Exit if no school is selected
+    if (!school) return;
 
-    // Retrieve barbers from localStorage
-    const barbersBySchool = JSON.parse(localStorage.getItem('barbersBySchool')) || {};
-    let barbers = barbersBySchool[school] || [];
+    // Retrieve barbers from Firestore
+    db.collection("barbers").where("school", "==", school).get().then(snapshot => {
+        let barbers = snapshot.docs.map(doc => doc.data());
 
-    // Filter barbers by hairstyle if selected
-    if (selectedHairstyle) {
-        barbers = barbers.filter(barber => barber.hairstyles.includes(selectedHairstyle));
-    }
+        if (selectedHairstyle) {
+            barbers = barbers.filter(barber => barber.hairstyles.includes(selectedHairstyle));
+        }
 
-    // If no barbers are found, display a message
-    if (barbers.length === 0) {
-        barberList.innerHTML = "<p>No barbers available for this school and hairstyle.</p>";
-        return;
-    }
+        if (barbers.length === 0) {
+            barberList.innerHTML = "<p>No barbers available for this school and hairstyle.</p>";
+            return;
+        }
 
-    // Display barbers as buttons
-    barbers.forEach(barber => {
-        const button = document.createElement("button");
-        button.classList.add("barber-button");
-        button.innerHTML = `
-            <strong>${barber.name}</strong><br>
-            <span>${barber.location}</span><br>
-            <span>Hairstyles: ${barber.hairstyles.length ? barber.hairstyles.join(", ") : "Not specified"}</span><br>
-            <span>Available Days: ${barber.days ? barber.days.join(", ") : "Not specified"}</span><br>
-            <span>Available Times: ${formatTimeSlots(barber.timeslots)}</span>
-        `;
-        button.onclick = () => selectBarber(barber, button);
-        barberList.appendChild(button);
+        barbers.forEach(barber => {
+            const button = document.createElement("button");
+            button.classList.add("barber-button");
+            button.innerHTML = `
+                <strong>${barber.name}</strong><br>
+                <span>Address: ${barber.location}</span><br>
+                <span>Hairstyles: ${barber.hairstyles.join(", ")}</span><br>
+                <span>Available Days: ${barber.days.join(", ")}</span><br>
+                <span>Available Times: ${formatTimeSlots(barber.timeslots)}</span>
+            `;
+            button.onclick = () => selectBarber(barber, button);
+            barberList.appendChild(button);
+        });
+    }).catch(error => {
+        console.error("Error getting barbers: ", error);
     });
 }
 
 // Helper Function to Format Time Slots
 function formatTimeSlots(timeslots) {
-    return timeslots && timeslots.length
-        ? timeslots.filter(time => time).join(", ")
-        : "Not specified";
+    return timeslots.length ? timeslots.join(", ") : "Not specified";
 }
 
 // Function to Select a Barber
@@ -130,4 +143,31 @@ function selectBarber(barber, button) {
     localStorage.setItem("selectedBarber", JSON.stringify(barber));
     document.getElementById("submitAppointment").style.display = "block";
     alert(`You selected ${barber.name} for your appointment.`);
+}
+
+// Handle Appointment Booking
+function bookAppointment(clientId, barberId, appointmentData) {
+    db.collection("appointments").add({
+        clientId,
+        barberId,
+        ...appointmentData,
+        status: "pending",
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(() => {
+        alert("Appointment request sent!");
+    }).catch(error => {
+        console.error("Error booking appointment: ", error);
+    });
+}
+
+// Handle Real-Time Updates for Barbers
+function listenForAppointments(barberId) {
+    db.collection("appointments").where("barberId", "==", barberId)
+        .onSnapshot(snapshot => {
+            snapshot.docChanges().forEach(change => {
+                if (change.type === "added") {
+                    console.log("New appointment:", change.doc.data());
+                }
+            });
+        });
 }

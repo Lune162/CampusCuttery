@@ -4,10 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Client Sign Up - Campus Cuttery</title>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+
+  <script>
+    // Initialize Firebase (Replace with your actual Firebase project config)
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
+
   <style>
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #FFB6C1, #FF69B4); /* Changed to a more vibrant pink gradient */
+      background: linear-gradient(135deg, #FFB6C1, #FF69B4);
       color: #333;
       margin: 0;
       padding: 0;
@@ -146,10 +165,10 @@
       <form id="clientForm">
         <input type="text" id="clientName" name="name" placeholder="Name" required>
         <input type="email" id="clientEmail" name="email" placeholder="Email" required>
+        <input type="password" id="clientPassword" name="password" placeholder="Password (6+ characters)" required>
         <input type="tel" id="clientPhone" name="phone" placeholder="Phone Number" required>
 
         <input type="date" id="appointmentDate" name="date" required>
-
         <input type="time" id="appointmentTime" name="time" required>
 
         <select name="school" id="clientSchool" required onchange="displayBarbers()">
@@ -187,91 +206,30 @@
   </div>
 
   <script>
-    let selectedBarber = null;
-
-    // Function to group barber availability times
-    function groupDaysByTimes(barber) {
-      const daysGrouped = {};
-      barber.days.forEach((day, index) => {
-        const time = barber.timeslots[index];
-        if (!daysGrouped[time]) {
-          daysGrouped[time] = [];
-        }
-        daysGrouped[time].push(day);
-      });
-
-      let availability = [];
-      for (const [time, days] of Object.entries(daysGrouped)) {
-        if (days.length === 5 && days.includes("monday") && days.includes("friday")) {
-          availability.push(`Weekdays ${time}`);
-        } else if (days.length === 2 && days.includes("saturday") && days.includes("sunday")) {
-          availability.push(`Weekends ${time}`);
-        } else {
-          availability.push(`${days.join(", ")} ${time}`);
-        }
-      }
-
-      return availability.join(" | ");
-    }
-
-    // Function to display barbers based on school and hairstyle
-    function displayBarbers() {
-      const school = document.getElementById("clientSchool").value;
-      const barberList = document.getElementById("barberList");
-      barberList.innerHTML = "";
-
-      if (!school) return;
-
-      const barbersBySchool = JSON.parse(localStorage.getItem("barbersBySchool")) || {};
-      const barbers = barbersBySchool[school] || [];
-
-      if (barbers.length === 0) {
-        barberList.innerHTML = "<p>No available barbers.</p>";
-        return;
-      }
-
-      barbers.forEach(barber => {
-        const button = document.createElement("button");
-        button.classList.add("barber-button");
-        button.innerHTML = `
-          <strong>${barber.name}</strong><br>
-          <span>Address: ${barber.location}</span><br>
-          <span>Available: ${groupDaysByTimes(barber)}</span>
-        `;
-        button.onclick = () => selectBarber(barber, button);
-        barberList.appendChild(button);
-      });
-    }
-
-    // Function to select a barber
-    function selectBarber(barber, button) {
-      document.querySelectorAll(".barber-button").forEach(btn => btn.classList.remove("selected"));
-      button.classList.add("selected");
-      selectedBarber = barber;
-    }
-
-    // Handle form submission
     document.getElementById("clientForm").addEventListener("submit", function(e) {
       e.preventDefault();
-      if (!selectedBarber) {
-        alert("Please select a barber.");
-        return;
-      }
 
-      const appointmentData = {
-        clientName: document.getElementById("clientName").value,
-        clientEmail: document.getElementById("clientEmail").value,
-        appointmentDate: document.getElementById("appointmentDate").value,
-        appointmentTime: document.getElementById("appointmentTime").value,
-        barberName: selectedBarber.name,
-      };
+      const name = document.getElementById("clientName").value;
+      const email = document.getElementById("clientEmail").value;
+      const password = document.getElementById("clientPassword").value;
+      const phone = document.getElementById("clientPhone").value;
+      const appointmentDate = document.getElementById("appointmentDate").value;
+      const appointmentTime = document.getElementById("appointmentTime").value;
 
-      let requests = JSON.parse(localStorage.getItem("appointmentRequests")) || [];
-      requests.push(appointmentData);
-      localStorage.setItem("appointmentRequests", JSON.stringify(requests));
-
-      alert(`Appointment request sent to ${appointmentData.barberName}!`);
-      window.location.href = "appointment.html";
+      firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then(userCredential => {
+          return firebase.firestore().collection("clients").doc(userCredential.user.uid).set({
+            name, email, phone, appointmentDate, appointmentTime,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        })
+        .then(() => {
+          alert("Sign up successful!");
+          window.location.href = "dashboard.html"; // Redirect to client dashboard
+        })
+        .catch(error => {
+          alert(error.message);
+        });
     });
   </script>
 

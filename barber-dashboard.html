@@ -4,6 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Barber Dashboard - Campus Cuttery</title>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+
+  <script>
+    // Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
+
   <style>
     body {
       font-family: 'Poppins', sans-serif;
@@ -27,34 +46,30 @@
       border-radius: 15px;
       box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
       text-align: center;
-      animation: fadeIn 0.5s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
     }
 
     h1 {
-      font-size: 2.8em;
+      font-size: 2.5em;
       font-weight: bold;
-      transition: color 0.5s ease-in-out;
     }
 
-    .welcome-message {
-      font-size: 1.2em;
-      font-weight: bold;
-      color: #555;
-      margin-bottom: 15px;
+    .logout-btn {
+      background-color: #ff4444;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
     }
 
-    .client-requests-container,
-    .accepted-appointments-container {
+    .appointment-section {
       margin-top: 20px;
       text-align: left;
     }
 
-    .client-item, .appointment-item {
+    .appointment-card {
       background: #fff;
       padding: 15px;
       margin: 10px 0;
@@ -63,25 +78,23 @@
       transition: transform 0.2s ease-in-out;
     }
 
-    .client-item:hover, .appointment-item:hover {
-      transform: scale(1.03);
+    .appointment-card:hover {
+      transform: scale(1.02);
     }
 
-    .client-item p, .appointment-item p {
+    .appointment-card p {
       margin: 8px 0;
       font-size: 1em;
-      color: #333;
     }
 
     .btn {
-      padding: 12px 15px;
-      margin: 8px;
+      padding: 10px 12px;
+      margin: 5px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
       font-weight: bold;
-      transition: all 0.3s ease;
-      font-size: 1em;
+      font-size: 14px;
     }
 
     .btn.accept {
@@ -101,8 +114,8 @@
     .btn.reject:hover {
       background-color: #d32f2f;
     }
-    
-    .no-requests {
+
+    .no-appointments {
       font-size: 1.2em;
       color: #777;
       font-style: italic;
@@ -131,107 +144,104 @@
     <h1 id="dashboardTitle">Barber Dashboard</h1>
     <p class="welcome-message" id="welcomeMessage">Welcome, Barber!</p>
     
-    <h2>Your Appointment Requests</h2>
-    <div id="clientRequests" class="client-requests-container"></div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
 
-    <h2>Accepted Appointments</h2>
-    <div id="acceptedAppointments" class="accepted-appointments-container"></div>
+    <div class="appointment-section">
+      <h2>Pending Appointments</h2>
+      <div id="appointmentsList"></div>
+    </div>
+
+    <div class="appointment-section">
+      <h2>Accepted Appointments</h2>
+      <div id="acceptedAppointmentsList"></div>
+    </div>
   </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const barber = JSON.parse(localStorage.getItem("loggedInBarber")); 
-      const clientRequests = JSON.parse(localStorage.getItem("appointmentRequests")) || [];
-      const acceptedAppointments = JSON.parse(localStorage.getItem("acceptedAppointments")) || [];
-      const themeColor = localStorage.getItem("themeColor") || "#ff9a9e";
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        const barberEmail = user.email;
+        const db = firebase.firestore();
+        const appointmentsList = document.getElementById("appointmentsList");
+        const acceptedAppointmentsList = document.getElementById("acceptedAppointmentsList");
 
-      document.body.style.background = `linear-gradient(135deg, ${themeColor}, #fad0c4)`;
-      document.getElementById("dashboardTitle").style.color = themeColor;
-      document.getElementById("themeColor").value = themeColor;
-
-      const welcomeMessage = document.getElementById("welcomeMessage");
-      const clientRequestsDiv = document.getElementById("clientRequests");
-      const acceptedAppointmentsDiv = document.getElementById("acceptedAppointments");
-
-      clientRequestsDiv.innerHTML = "";
-      acceptedAppointmentsDiv.innerHTML = "";
-
-      if (barber) {
-        welcomeMessage.textContent = `Welcome, ${barber.name}!`;
-
-        // Display pending requests
-        const barberRequests = clientRequests.filter(request => request.barberEmail === barber.email);
-
-        if (barberRequests.length > 0) {
-          barberRequests.forEach((request, index) => {
-            const div = document.createElement("div");
-            div.classList.add("client-item");
-            div.innerHTML = `
-              <p><strong>Client:</strong> ${request.clientName}</p>
-              <p><strong>Email:</strong> ${request.clientEmail}</p>
-              <p><strong>Phone:</strong> ${request.clientPhone}</p>
-              <p><strong>Hairstyle:</strong> ${request.hairstyle}</p>
-              <p><strong>Date:</strong> ${formatDate(request.appointmentDate)}</p>
-              <p><strong>Time:</strong> ${formatTime(request.appointmentTime)}</p>
-              <button class="btn accept" onclick="acceptRequest(${index})">Accept</button>
-              <button class="btn reject" onclick="rejectRequest(${index})">Reject</button>
-            `;
-            clientRequestsDiv.appendChild(div);
+        // Load Pending Appointments
+        db.collection("appointments")
+          .where("barberEmail", "==", barberEmail)
+          .where("status", "==", "pending")
+          .onSnapshot(snapshot => {
+            appointmentsList.innerHTML = ""; 
+            if (snapshot.empty) {
+              appointmentsList.innerHTML = "<p class='no-appointments'>No pending appointments.</p>";
+              return;
+            }
+            
+            snapshot.forEach(doc => {
+              const appointment = doc.data();
+              const div = document.createElement("div");
+              div.classList.add("appointment-card");
+              div.innerHTML = `
+                <p><strong>Client:</strong> ${appointment.clientName}</p>
+                <p><strong>Email:</strong> ${appointment.clientEmail}</p>
+                <p><strong>Date:</strong> ${formatDate(appointment.appointmentDate)}</p>
+                <p><strong>Time:</strong> ${formatTime(appointment.appointmentTime)}</p>
+                <button class="btn accept" onclick="acceptAppointment('${doc.id}')">Accept</button>
+                <button class="btn reject" onclick="rejectAppointment('${doc.id}')">Reject</button>
+              `;
+              appointmentsList.appendChild(div);
+            });
           });
-        } else {
-          clientRequestsDiv.innerHTML = `<p class="no-requests">No appointment requests at the moment.</p>`;
-        }
 
-        // Display accepted appointments
-        const barberAppointments = acceptedAppointments.filter(appointment => appointment.barberEmail === barber.email);
-
-        if (barberAppointments.length > 0) {
-          barberAppointments.forEach(appointment => {
-            const div = document.createElement("div");
-            div.classList.add("appointment-item");
-            div.innerHTML = `
-              <p><strong>Client:</strong> ${appointment.clientName}</p>
-              <p><strong>Email:</strong> ${appointment.clientEmail}</p>
-              <p><strong>Hairstyle:</strong> ${appointment.hairstyle}</p>
-              <p><strong>Date:</strong> ${appointment.formattedDate}</p>
-              <p><strong>Time:</strong> ${appointment.formattedTime}</p>
-            `;
-            acceptedAppointmentsDiv.appendChild(div);
+        // Load Accepted Appointments
+        db.collection("appointments")
+          .where("barberEmail", "==", barberEmail)
+          .where("status", "==", "accepted")
+          .onSnapshot(snapshot => {
+            acceptedAppointmentsList.innerHTML = ""; 
+            if (snapshot.empty) {
+              acceptedAppointmentsList.innerHTML = "<p class='no-appointments'>No accepted appointments.</p>";
+              return;
+            }
+            
+            snapshot.forEach(doc => {
+              const appointment = doc.data();
+              const div = document.createElement("div");
+              div.classList.add("appointment-card");
+              div.innerHTML = `
+                <p><strong>Client:</strong> ${appointment.clientName}</p>
+                <p><strong>Email:</strong> ${appointment.clientEmail}</p>
+                <p><strong>Date:</strong> ${formatDate(appointment.appointmentDate)}</p>
+                <p><strong>Time:</strong> ${formatTime(appointment.appointmentTime)}</p>
+              `;
+              acceptedAppointmentsList.appendChild(div);
+            });
           });
-        } else {
-          acceptedAppointmentsDiv.innerHTML = `<p class="no-requests">No accepted appointments.</p>`;
-        }
+
+      } else {
+        window.location.href = "login.html";
       }
     });
 
-    function acceptRequest(index) {
-      let clientRequests = JSON.parse(localStorage.getItem("appointmentRequests")) || [];
-      let acceptedAppointments = JSON.parse(localStorage.getItem("acceptedAppointments")) || [];
-
-      let acceptedRequest = clientRequests[index];
-
-      acceptedRequest.formattedDate = formatDate(acceptedRequest.appointmentDate);
-      acceptedRequest.formattedTime = formatTime(acceptedRequest.appointmentTime);
-
-      acceptedAppointments.push(acceptedRequest);
-      localStorage.setItem("acceptedAppointments", JSON.stringify(acceptedAppointments));
-
-      alert(`Appointment accepted for ${acceptedRequest.clientName}.`);
-
-      clientRequests.splice(index, 1);
-      localStorage.setItem("appointmentRequests", JSON.stringify(clientRequests));
-      location.reload();
+    function acceptAppointment(appointmentId) {
+      firebase.firestore().collection("appointments").doc(appointmentId).update({
+        status: "accepted"
+      }).then(() => {
+        alert("Appointment accepted!");
+      });
     }
 
-    function rejectRequest(index) {
-      let clientRequests = JSON.parse(localStorage.getItem("appointmentRequests")) || [];
-      let rejectedRequest = clientRequests[index];
+    function rejectAppointment(appointmentId) {
+      firebase.firestore().collection("appointments").doc(appointmentId).update({
+        status: "rejected"
+      }).then(() => {
+        alert("Appointment rejected!");
+      });
+    }
 
-      alert(`Appointment rejected for ${rejectedRequest.clientName}.`);
-
-      clientRequests.splice(index, 1);
-      localStorage.setItem("appointmentRequests", JSON.stringify(clientRequests));
-      location.reload();
+    function logout() {
+      firebase.auth().signOut().then(() => {
+        window.location.href = "login.html";
+      });
     }
 
     function formatDate(dateString) {
