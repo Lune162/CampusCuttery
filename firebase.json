@@ -6,7 +6,8 @@
     },
     "apphosting": {
       "port": 5002,
-      "rootDirectory": "./"
+      "rootDirectory": "./",
+      "startCommand": "npm run dev"
     },
     "auth": {
       "port": 9099
@@ -69,6 +70,28 @@
       "predeploy": [
         "npm --prefix \"$RESOURCE_DIR\" run lint"
       ]
+    },
+    {
+      "source": "campuscuttery",
+      "codebase": "campuscuttery",
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint",
+        "npm --prefix \"$RESOURCE_DIR\" run build"
+      ]
+    },
+    {
+      "source": "campuscutterymaster",
+      "codebase": "campuscutterymaster",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ]
     }
   ],
   "hosting": {
@@ -77,20 +100,12 @@
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
     ]
   },
   "storage": {
     "rules": "storage.rules"
   },
-  "remoteconfig": {
-    "template": "remoteconfig.template.json"
-  },
+  "remoteconfig": {},
   "extensions": {},
   "database": {
     "rules": "database.rules.json"

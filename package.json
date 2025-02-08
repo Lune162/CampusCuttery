@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/Lune162/CampusCuttery#readme",
   "dependencies": {
+    "@firebasegen/default-connector": "file:dataconnect-generated/js/default-connector",
     "firebase": "^11.3.0"
   }
 }

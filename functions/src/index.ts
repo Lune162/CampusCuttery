@@ -1,19 +1,13 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * import {onCall} from "firebase-functions/v2/https";
- * import {onDocumentWritten} from "firebase-functions/v2/firestore";
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
+import { onRequest } from "firebase-functions/v2/https"; // HTTP function
+import * as logger from "firebase-functions/logger"; // Logger for debugging
 
-import {onRequest} from "firebase-functions/v2/https";
-import * as logger from "firebase-functions/logger";
+// Import the menu suggestion flow function from genkit-sample.ts
+import { menuSuggestionFlow } from './genkit-sample';  // Adjust the path if necessary
 
-// Start writing functions
-// https://firebase.google.com/docs/functions/typescript
+// Example HTTP function that handles requests to a specific endpoint
+export const helloWorld = onRequest((request, response) => {
+  logger.info("Hello from Firebase Function!", { structuredData: true });
+  response.send("Hello from Firebase!");
+});
 
-// export const helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+// You don't need to do anything else; menuSuggestionFlow will be deployed automatically as part of Firebase functions.
