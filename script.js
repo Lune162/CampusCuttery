@@ -1,5 +1,6 @@
 // script.js
 import { supabase } from './supabase.js'; // This imports the supabase client
+console.log(supabase);
 
 document.addEventListener("DOMContentLoaded", function () {
   const clientForm = document.getElementById("clientForm");
