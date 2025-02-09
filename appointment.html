@@ -1,30 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Your HTML code -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-  import { getAuth } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-  import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-
-  // Initialize Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyB9TYVDPd5yiEMgeyzYZuW04qXAlMD-C4k",
-    authDomain: "campus-cuttery.firebaseapp.com",
-    projectId: "campus-cuttery",
-    storageBucket: "campus-cuttery.firebasestorage.app",
-    messagingSenderId: "505873129716",
-    appId: "1:505873129716:web:5b2f41d92058137f0dbea1",
-    measurementId: "G-91K4SBTWQX"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Appointment Confirmation - Campus Cuttery</title>
+
+  <script src="supabase.js"></script>
+  <script src="script.js" type="module"></script>
+
+
+    async function saveAppointment(appointment) {
+      const { data, error } = await supabase
+        .from("appointments")
+        .insert([appointment]);
+      
+      if (error) {
+        console.error("Error saving appointment:", error);
+      } else {
+        console.log("Appointment saved:", data);
+      }
+    }
+  </script>
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -36,7 +33,6 @@
       height: 100vh;
       text-align: center;
     }
-
     .container {
       width: 100%;
       max-width: 700px;
@@ -46,17 +42,14 @@
       border-radius: 15px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
-
     h1 {
       color: #ff3366;
       font-size: 2.5em;
     }
-
     p {
       font-size: 1.2em;
       color: #333;
     }
-
     button {
       background: #ffcc00;
       border: none;
@@ -66,7 +59,6 @@
       border-radius: 5px;
       margin-top: 20px;
     }
-
     button:hover {
       background: #ff9900;
     }
@@ -81,20 +73,18 @@
   </div>
 
   <script>
-    // Function to load the appointment details from localStorage and display the confirmation message
     window.onload = function() {
       const appointment = JSON.parse(localStorage.getItem('appointmentRequest'));
-
       if (appointment) {
         document.getElementById('confirmationMessage').innerText = `Thank you for submitting your appointment to ${appointment.barberName}!`;
+        saveAppointment(appointment);  // Call saveAppointment to insert into Supabase
       } else {
         document.getElementById('confirmationMessage').innerText = 'No appointment found.';
       }
     };
 
-    // Function to go back to the client sign-up page
     function goBack() {
-      window.location.href = 'index.html'; // Replace 'index.html' with your client sign-up page URL
+      window.location.href = 'index.html';
     }
   </script>
 

@@ -5,34 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Campus Cuttery</title>
 
-  <!-- Firebase Modular SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-    import { getAuth } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-    import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+  <script src="supabase.js"></script>
+<script src="script.js" type="module"></script>
 
-    // Your Firebase config object (replace with your own Firebase config values)
-    const firebaseConfig = {
-      apiKey: "AIzaSyB9TYVDPd5yiEMgeyzYZuW04qXAlMD-C4k",
-      authDomain: "campus-cuttery.firebaseapp.com",
-      projectId: "campus-cuttery",
-      storageBucket: "campus-cuttery.firebasestorage.app",
-      messagingSenderId: "505873129716",
-      appId: "1:505873129716:web:5b2f41d92058137f0dbea1",
-      measurementId: "G-91K4SBTWQX"
-    };
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-
-    // Initialize Firebase services
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    // Log the auth and db objects to ensure they are initialized correctly
-    console.log("Firebase Auth:", auth);
-    console.log("Firestore DB:", db);
-  </script>
 
   <style>
     body {
