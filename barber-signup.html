@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Add this before your script.js -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1.35.6/dist/umd/supabase.js"></script>
-<script src="script.js" type="module"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1.35.6/dist/umd/supabase.js"></script>
+  <script type="module" src="script.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Barber Sign Up - Campus Cuttery</title>
@@ -192,21 +191,13 @@
   <p>Already have an account? <a href="barber-login.html">Log in here</a></p>
 
   <script>
-    function toggleTimeSlots(day) {
-      const timeSlotDiv = document.getElementById(day + '-timeslot');
-      const checkbox = document.querySelector(`input[name="days"][value="${day}"]`);
-      if (checkbox.checked) {
-        timeSlotDiv.style.display = 'block';
-      } else {
-        timeSlotDiv.style.display = 'none';
-      }
-    }
+    // Initialize Supabase client
+    const supabaseUrl = "https://yourprojectref.supabase.co";  // Replace with your Supabase URL
+    const supabaseKey = "your-api-key";  // Replace with your Supabase Key
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    function toggleSelection(button) {
-      button.classList.toggle('selected');
-    }
-
-    function handleSubmit(event) {
+    // Function to handle form submission
+    async function handleSubmit(event) {
       event.preventDefault();
 
       // Capture barber form data
@@ -227,25 +218,32 @@
 
       console.log("Barber Data:", barberData); // Debugging
 
-      // Retrieve existing barbers from localStorage or initialize as empty object
-      let barbersBySchool = JSON.parse(localStorage.getItem('barbersBySchool')) || {};
+      // Insert barber data into Supabase
+      const { data, error } = await supabase.from('barbers').insert([barberData]);
 
-      // If no school entry exists, create one
-      if (!barbersBySchool[barberData.school]) {
-          barbersBySchool[barberData.school] = [];
+      if (error) {
+        console.error("Error inserting data:", error);
+        alert("There was an error saving your data.");
+      } else {
+        alert("Barber signed up successfully!");
+        window.location.href = 'barber-dashboard.html'; // Redirect to barber dashboard
       }
+    }
 
-      // Add new barber to the correct school
-      barbersBySchool[barberData.school].push(barberData);
+    // Function to toggle hairstyle selection
+    function toggleSelection(button) {
+      button.classList.toggle('selected');
+    }
 
-      // Save the updated barbersBySchool back to localStorage
-      localStorage.setItem('barbersBySchool', JSON.stringify(barbersBySchool));
-
-      // Optionally, store barber data as 'loggedInBarber' for future use
-      localStorage.setItem('loggedInBarber', JSON.stringify(barberData));
-
-      alert('Barber signed up successfully!');
-      window.location.href = 'barber-dashboard.html'; // Redirect to barber dashboard
+    // Function to toggle timeslot visibility based on selected days
+    function toggleTimeSlots(day) {
+      const timeSlotDiv = document.getElementById(day + '-timeslot');
+      const checkbox = document.querySelector(`input[name="days"][value="${day}"]`);
+      if (checkbox.checked) {
+        timeSlotDiv.style.display = 'block';
+      } else {
+        timeSlotDiv.style.display = 'none';
+      }
     }
   </script>
 
