@@ -5,7 +5,7 @@
     import { createClient } from "https://cdn.skypack.dev/pin/@supabase/supabase-js@v2.48.1-Y3P1PoFF2eatCaxdnjxz/mode=imports,min/optimized/@supabase/supabase-js.js";
 
     // Creating the Supabase client
-    const supabase = createClient(
+    const supabase = await createClient(
       "https://ocjkzxaaqbsmmcveuxxn.supabase.co",  // Your Supabase URL
 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9jamt6eGFhcWJzbW1jdmV1eHhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkxMjgzNTEsImV4cCI6MjA1NDcwNDM1MX0.Ha8jMv6pewZAka5NV4N8Tj6olp6LlsqYpJvcgUQW_1w"  // Your Supabase API Key
     );
